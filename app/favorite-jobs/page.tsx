@@ -137,6 +137,8 @@ export default function FavoriteJobsPage() {
       />
 
       <FilterBar
+        filters={filters}
+        onFilterChange={handleFilterChange}
         onFilterClick={handleFilterClick}
         onClearAll={handleClearFilters}
         onSearch={() => handleSearch(searchTerm)}

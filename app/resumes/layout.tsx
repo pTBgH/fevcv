@@ -1,38 +1,31 @@
-"use client"
-
 import type React from "react"
+import { Inter } from "next/font/google"
+import "../globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Providers } from "./providers"
 
-import { useEffect } from "react"
-import { useAuth } from "@/hooks/use-auth"
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+})
 
-export default function ResumesLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const { isAuthenticated, isLoading, requireAuth } = useAuth()
+  return (
+    <html lang="en" className={inter.variable}>
+      <body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
+}
 
-  // Check authentication when page loads
-  useEffect(() => {
-    if (!isLoading) {
-      requireAuth()
-    }
-  }, [isLoading, requireAuth])
-
-  // Show loading state while checking authentication
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-blue-500"></div>
-      </div>
-    )
-  }
-
-  // If not authenticated, return null (will be redirected by requireAuth)
-  if (!isAuthenticated) {
-    return null
-  }
-
-  // If authenticated, show the resume management layout
-  return <div className="min-h-screen bg-gray-50 pt-16">{children}</div>
+export const metadata = {
+  generator: "v0.dev",
 }

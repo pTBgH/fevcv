@@ -1,0 +1,12 @@
+{
+  "jobsPerPage": 12,
+  "jobsPerRow": {
+    "mobile": 1,
+    "tablet": 2,
+    "desktop": 3
+  },
+  "defaultDisplayMode": {
+    "columns": 3,
+    "rows": 2
+  }
+}

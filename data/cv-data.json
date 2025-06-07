@@ -1,0 +1,116 @@
+{
+  "resumes": [
+    {
+      "id": "1",
+      "title": "Software Engineer CV",
+      "createdAt": "2024-10-09T08:30:00Z",
+      "updatedAt": "2024-10-09T08:30:00Z",
+      "isFavorite": false,
+      "deletedAt": null,
+      "fileUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "fileType": "pdf",
+      "data": {
+        "degree": "Bachelor of Science in Computer Science",
+        "technicalSkills": "JavaScript, React, Node.js, Python",
+        "softSkills": "Communication, Teamwork, Problem-solving",
+        "experience": "3 years as a Full Stack Developer"
+      }
+    },
+    {
+      "id": "2",
+      "title": "Data Analyst CV",
+      "createdAt": "2024-10-08T14:15:00Z",
+      "updatedAt": "2024-10-08T15:20:00Z",
+      "isFavorite": true,
+      "deletedAt": null,
+      "fileUrl": "/samples/resume-2.pdf",
+      "fileType": "pdf",
+      "data": {
+        "degree": "Master of Science in Data Science",
+        "technicalSkills": "Python, R, SQL, Machine Learning",
+        "softSkills": "Data Visualization, Statistical Analysis, Critical Thinking",
+        "experience": "2 years as a Data Analyst"
+      }
+    },
+    {
+      "id": "3",
+      "title": "UX Designer CV",
+      "createdAt": "2024-10-07T10:45:00Z",
+      "updatedAt": "2024-10-07T10:45:00Z",
+      "isFavorite": false,
+      "deletedAt": "2024-10-26T15:20:00Z",
+      "fileUrl": "/samples/resume-3.pdf",
+      "fileType": "pdf",
+      "data": {
+        "degree": "Bachelor of Fine Arts in Graphic Design",
+        "technicalSkills": "Adobe Creative Suite, Figma, Sketch",
+        "softSkills": "Creativity, User Empathy, Collaboration",
+        "experience": "4 years as a UX/UI Designer"
+      }
+    },
+    {
+      "id": "4",
+      "title": "Product Manager CV",
+      "createdAt": "2024-10-05T09:20:00Z",
+      "updatedAt": "2024-10-05T09:20:00Z",
+      "isFavorite": true,
+      "deletedAt": null,
+      "fileUrl": "/samples/resume-1.doc",
+      "fileType": "doc",
+      "data": {
+        "degree": "MBA in Product Management",
+        "technicalSkills": "Agile, Scrum, JIRA, Product Roadmapping",
+        "softSkills": "Leadership, Strategic Thinking, Communication",
+        "experience": "5 years as a Product Manager"
+      }
+    },
+    {
+      "id": "5",
+      "title": "Marketing CV",
+      "createdAt": "2024-10-03T11:30:00Z",
+      "updatedAt": "2024-10-03T11:30:00Z",
+      "isFavorite": false,
+      "deletedAt": "2024-10-27T08:05:00Z",
+      "fileUrl": "/samples/resume-2.doc",
+      "fileType": "doc",
+      "data": {
+        "degree": "Bachelor of Business Administration in Marketing",
+        "technicalSkills": "Google Analytics, SEO, Social Media Marketing",
+        "softSkills": "Creativity, Communication, Analytical Thinking",
+        "experience": "3 years as a Digital Marketing Specialist"
+      }
+    },
+    {
+      "id": "6",
+      "title": "Frontend Developer CV",
+      "createdAt": "2024-10-01T13:45:00Z",
+      "updatedAt": "2024-10-01T13:45:00Z",
+      "isFavorite": false,
+      "deletedAt": "2024-10-26T15:20:00Z",
+      "fileUrl": "/samples/resume-3.pdf",
+      "fileType": "pdf",
+      "data": {
+        "degree": "Bachelor of Computer Science",
+        "technicalSkills": "HTML, CSS, JavaScript, React, Vue.js",
+        "softSkills": "Problem-solving, Attention to Detail, Teamwork",
+        "experience": "4 years as a Frontend Developer"
+      }
+    },
+    {
+      "id": "7",
+      "title": "Backend Developer CV",
+      "createdAt": "2024-09-28T10:15:00Z",
+      "updatedAt": "2024-09-28T10:15:00Z",
+      "isFavorite": false,
+      "deletedAt": "2024-10-25T09:30:00Z",
+      "fileUrl": "/samples/resume-1.docx",
+      "fileType": "docx",
+      "data": {
+        "degree": "Master of Computer Science",
+        "technicalSkills": "Node.js, Python, Java, SQL, NoSQL",
+        "softSkills": "Problem-solving, Analytical Thinking, Communication",
+        "experience": "5 years as a Backend Developer"
+      }
+    }
+  ]
+}

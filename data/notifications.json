@@ -1,0 +1,224 @@
+{
+  "notifications": [
+    {
+      "id": "n001",
+      "title": "New job match found",
+      "message": "We found a new Software Engineer position that matches your profile.",
+      "type": "info",
+      "isRead": false,
+      "createdAt": "2025-03-28T14:30:00Z",
+      "link": "/jobs/004",
+      "relatedEntityId": "004",
+      "relatedEntityType": "job"
+    },
+    {
+      "id": "n002",
+      "title": "Resume uploaded successfully",
+      "message": "Your resume 'Software Engineer CV' has been uploaded and processed.",
+      "type": "success",
+      "isRead": true,
+      "createdAt": "2025-03-27T10:15:00Z",
+      "link": "/dashboard/resumes",
+      "relatedEntityId": "1",
+      "relatedEntityType": "resume"
+    },
+    {
+      "id": "n003",
+      "title": "Application deadline approaching",
+      "message": "The application deadline for 'Frontend Developer' is in 2 days.",
+      "type": "warning",
+      "isRead": false,
+      "createdAt": "2025-03-26T09:45:00Z",
+      "link": "/jobs/004",
+      "relatedEntityId": "004",
+      "relatedEntityType": "job"
+    },
+    {
+      "id": "n004",
+      "title": "Profile update reminder",
+      "message": "Your profile is 70% complete. Complete your profile to get better job matches.",
+      "type": "info",
+      "isRead": false,
+      "createdAt": "2025-03-25T16:20:00Z",
+      "link": "/dashboard/profile",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    },
+    {
+      "id": "n005",
+      "title": "Job application status update",
+      "message": "Your application for 'Data Analyst' has been viewed by the employer.",
+      "type": "info",
+      "isRead": true,
+      "createdAt": "2025-03-24T11:30:00Z",
+      "link": "/jobs/002",
+      "relatedEntityId": "002",
+      "relatedEntityType": "job"
+    },
+    {
+      "id": "n006",
+      "title": "New feature available",
+      "message": "Try our new AI-powered resume analyzer for better job matches.",
+      "type": "info",
+      "isRead": false,
+      "createdAt": "2025-03-23T08:45:00Z",
+      "link": "/dashboard/resumes",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    },
+    {
+      "id": "n007",
+      "title": "Resume feedback available",
+      "message": "We've analyzed your resume and have some suggestions for improvement.",
+      "type": "info",
+      "isRead": true,
+      "createdAt": "2025-03-22T14:10:00Z",
+      "link": "/dashboard/resumes",
+      "relatedEntityId": "1",
+      "relatedEntityType": "resume"
+    },
+    {
+      "id": "n008",
+      "title": "Job saved to favorites",
+      "message": "You've saved 'UX/UI Designer' to your favorites.",
+      "type": "success",
+      "isRead": true,
+      "createdAt": "2025-03-21T09:30:00Z",
+      "link": "/jobs/006",
+      "relatedEntityId": "006",
+      "relatedEntityType": "job"
+    },
+    {
+      "id": "n009",
+      "title": "Weekly job digest",
+      "message": "Check out this week's top job matches for your profile.",
+      "type": "info",
+      "isRead": false,
+      "createdAt": "2025-03-20T07:00:00Z",
+      "link": "/dashboard",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    },
+    {
+      "id": "n010",
+      "title": "Account security alert",
+      "message": "Your account was accessed from a new device. Please verify if this was you.",
+      "type": "error",
+      "isRead": false,
+      "createdAt": "2025-03-19T22:15:00Z",
+      "link": "/dashboard/settings",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    },
+    {
+      "id": "n011",
+      "title": "Resume viewed by employer",
+      "message": "Your resume was viewed by TechNova Solutions.",
+      "type": "info",
+      "isRead": true,
+      "createdAt": "2025-03-18T13:45:00Z",
+      "link": "/dashboard/resumes",
+      "relatedEntityId": "1",
+      "relatedEntityType": "resume"
+    },
+    {
+      "id": "n012",
+      "title": "New message from employer",
+      "message": "You have a new message from InsightShare Analytics regarding your application.",
+      "type": "info",
+      "isRead": false,
+      "createdAt": "2025-03-17T10:30:00Z",
+      "link": "/messages",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    },
+    {
+      "id": "n013",
+      "title": "Job interview invitation",
+      "message": "You've been invited to an interview for the Product Manager position.",
+      "type": "success",
+      "isRead": false,
+      "createdAt": "2025-03-16T15:20:00Z",
+      "link": "/jobs/015",
+      "relatedEntityId": "015",
+      "relatedEntityType": "job"
+    },
+    {
+      "id": "n014",
+      "title": "Resume update reminder",
+      "message": "Your resume hasn't been updated in 3 months. Consider updating it with your latest experience.",
+      "type": "warning",
+      "isRead": true,
+      "createdAt": "2025-03-15T09:10:00Z",
+      "link": "/dashboard/resumes",
+      "relatedEntityId": "1",
+      "relatedEntityType": "resume"
+    },
+    {
+      "id": "n015",
+      "title": "Job application deadline passed",
+      "message": "The application deadline for 'Network Engineer' has passed.",
+      "type": "warning",
+      "isRead": true,
+      "createdAt": "2025-03-14T23:59:00Z",
+      "link": "/jobs/020",
+      "relatedEntityId": "020",
+      "relatedEntityType": "job"
+    },
+    {
+      "id": "n016",
+      "title": "New jobs in your area",
+      "message": "15 new jobs matching your profile have been posted in your area.",
+      "type": "info",
+      "isRead": false,
+      "createdAt": "2025-03-13T08:30:00Z",
+      "link": "/search",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    },
+    {
+      "id": "n017",
+      "title": "Profile strength increased",
+      "message": "Your profile strength has increased to 85%. Keep up the good work!",
+      "type": "success",
+      "isRead": true,
+      "createdAt": "2025-03-12T14:45:00Z",
+      "link": "/dashboard/profile",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    },
+    {
+      "id": "n018",
+      "title": "Job application rejected",
+      "message": "Your application for 'System Administrator' was not selected for the next round.",
+      "type": "error",
+      "isRead": false,
+      "createdAt": "2025-03-11T16:30:00Z",
+      "link": "/jobs/021",
+      "relatedEntityId": "021",
+      "relatedEntityType": "job"
+    },
+    {
+      "id": "n019",
+      "title": "Skill assessment available",
+      "message": "A new skill assessment for JavaScript is available. Take it to improve your job matches.",
+      "type": "info",
+      "isRead": true,
+      "createdAt": "2025-03-10T11:20:00Z",
+      "link": "/assessments",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    },
+    {
+      "id": "n020",
+      "title": "Account verification successful",
+      "message": "Your account has been successfully verified. Enjoy all features of VietCV!",
+      "type": "success",
+      "isRead": true,
+      "createdAt": "2025-03-09T09:15:00Z",
+      "link": "/dashboard",
+      "relatedEntityId": null,
+      "relatedEntityType": null
+    }
+  ]
+}

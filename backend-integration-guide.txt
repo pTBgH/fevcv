@@ -1,0 +1,179 @@
+# Backend Integration Guide for Resume Management Application
+
+## Overview
+This document outlines the key areas where your Next.js frontend should connect to your Laravel backend. This is a guide for integration points rather than implementation details, as you'll be building the Laravel backend yourself.
+
+## 1. Authentication System
+
+### Integration Points:
+- `app/layout.tsx` - For global authentication state
+- Login/Registration components (to be created)
+
+### Recommendations:
+- Implement Laravel Sanctum for token-based authentication
+- Create API endpoints for:
+  - User registration
+  - User login/logout
+  - Password reset
+  - Email verification
+- Store authentication tokens in HTTP-only cookies or localStorage
+
+## 2. Job Management
+
+### Integration Points:
+- `lib/job-service.ts` - Replace static data with API calls
+- `app/search/page.tsx` - For job search functionality
+- `app/jobs/page.tsx` - For job listings
+
+### Recommendations:
+- Create Laravel API endpoints for:
+  - Fetching all jobs with pagination
+  - Searching jobs with filters
+  - Getting job details by ID
+- Consider implementing caching for frequently accessed job data
+- Use Laravel's Eloquent ORM for complex job queries
+
+## 3. Resume Management
+
+### Integration Points:
+- `lib/cv-service.ts` - Replace mock data with API calls
+- `app/upload/page.tsx` - For resume upload functionality
+- `app/upload/review/page.tsx` - For resume review and editing
+- `app/dashboard/resumes/page.tsx` - For resume management
+
+### Recommendations:
+- Create Laravel API endpoints for:
+  - Uploading resumes (handle file storage)
+  - Fetching user's resumes
+  - Updating resume metadata
+  - Deleting/restoring resumes
+- Use Laravel's file storage system for resume files
+- Implement resume parsing on the backend (consider using a third-party service)
+
+## 4. User Actions
+
+### Integration Points:
+- `lib/user-job-actions.ts` - Replace localStorage with API calls
+- Components that handle favorites, archives, etc.
+
+### Recommendations:
+- Create Laravel API endpoints for:
+  - Adding/removing jobs from favorites
+  - Archiving/unarchiving jobs
+  - Hiding/unhiding jobs
+- Store user preferences in the database
+- Consider using Laravel's polymorphic relationships for flexible user actions
+
+## 5. History Tracking
+
+### Integration Points:
+- `lib/history-service.ts` - Replace static data with API calls
+- `app/dashboard/history/page.tsx` - For history display
+
+### Recommendations:
+- Create Laravel API endpoints for:
+  - Fetching user activity history
+  - Searching through history
+- Consider using Laravel's Eloquent events to automatically track certain user actions
+
+## 6. File Upload System
+
+### Integration Points:
+- `app/upload/page.tsx` - For handling file uploads
+- Any components that deal with file management
+
+### Recommendations:
+- Create Laravel API endpoints for:
+  - File upload with validation
+  - File retrieval
+  - File deletion
+- Use Laravel's file validation and storage systems
+- Consider implementing chunked uploads for large files
+- Implement proper file type validation on both frontend and backend
+
+## 7. Search Functionality
+
+### Integration Points:
+- `app/search/page.tsx` - For search interface
+- `components/job/search-filters.tsx` - For search filters
+
+### Recommendations:
+- Create Laravel API endpoints for:
+  - Full-text search across jobs
+  - Filtered search with multiple parameters
+- Consider using Laravel Scout with a search driver like Algolia or Elasticsearch for advanced search capabilities
+- Implement proper indexing for search performance
+
+## 8. Internationalization
+
+### Integration Points:
+- `lib/i18n/context.tsx` - For language management
+- `lib/i18n/translations.ts` - For translations
+
+### Recommendations:
+- Store translations in the database or language files on the backend
+- Create API endpoints to fetch translations based on locale
+- Consider implementing a translation management system
+
+## 9. Analytics and Reporting
+
+### Integration Points:
+- Dashboard components that display statistics
+- `components/dashboard/job-distribution.tsx`
+- `components/dashboard/stats-cards.tsx`
+
+### Recommendations:
+- Create Laravel API endpoints for:
+  - User activity statistics
+  - Job application analytics
+  - Resume performance metrics
+- Use Laravel's query builder for complex aggregations
+- Consider implementing a caching layer for performance
+
+## 10. Security Considerations
+
+### General Recommendations:
+- Implement proper CSRF protection
+- Use Laravel's validation system for all inputs
+- Implement rate limiting on API endpoints
+- Ensure proper authorization checks for all actions
+- Sanitize all user inputs
+- Implement proper error handling and logging
+
+## Implementation Strategy
+
+1. Start with authentication as it's the foundation for user-specific features
+2. Implement core data models (jobs, resumes, user actions)
+3. Build file upload functionality
+4. Implement search and filtering
+5. Add user action tracking and history
+6. Implement analytics and reporting
+7. Add internationalization support
+8. Optimize performance and security
+
+## API Structure Suggestion
+
+Consider organizing your Laravel API with these resource groups:
+
+- `/api/auth` - Authentication endpoints
+- `/api/jobs` - Job-related endpoints
+- `/api/resumes` - Resume-related endpoints
+- `/api/user/actions` - User action endpoints
+- `/api/user/history` - User history endpoints
+- `/api/search` - Search endpoints
+- `/api/analytics` - Analytics endpoints
+
+## Database Schema Considerations
+
+Your Laravel backend will likely need these key tables:
+
+- `users` - User accounts
+- `jobs` - Job listings
+- `resumes` - User resumes
+- `user_job_actions` - User actions on jobs (favorites, etc.)
+- `user_history` - User activity history
+- `categories` - Job categories
+- `locations` - Job locations
+- `companies` - Company information
+
+Remember to implement proper relationships between these tables using Laravel's Eloquent ORM.

@@ -1,0 +1,92 @@
+{
+  "jobHistory": [
+    {
+      "id": "jh001",
+      "date": "2024-10-09",
+      "time": "09:31",
+      "action": "Unfavorited",
+      "jobId": "001",
+      "jobName": "Software Engineer",
+      "company": "TechNova Solutions",
+      "link": "#"
+    },
+    {
+      "id": "jh002",
+      "date": "2024-10-09",
+      "time": "09:30",
+      "action": "Favorited",
+      "jobId": "004",
+      "jobName": "Marketing Specialist",
+      "company": "BrightEdge Media",
+      "link": "#"
+    },
+    {
+      "id": "jh003",
+      "date": "2024-10-08",
+      "time": "20:05",
+      "action": "Hide",
+      "jobId": "002",
+      "jobName": "Data Analyst",
+      "company": "InsightShare Analytics",
+      "link": "#"
+    },
+    {
+      "id": "jh004",
+      "date": "2024-10-08",
+      "time": "20:00",
+      "action": "Unhide",
+      "jobId": "015",
+      "jobName": "Product Manager",
+      "company": "Nova Innovations",
+      "link": "#"
+    },
+    {
+      "id": "jh005",
+      "date": "2024-10-07",
+      "time": "15:37",
+      "action": "Archive",
+      "jobId": "008",
+      "jobName": "Product Manager",
+      "company": "CreativeTech Studios",
+      "link": "#"
+    }
+  ],
+  "resumeHistory": [
+    {
+      "id": "rh001",
+      "date": "2024-10-09",
+      "time": "09:25",
+      "action": "Unfavorite",
+      "resumeId": "1",
+      "resume": "Oct 04, 2024 (1)",
+      "link": "#"
+    },
+    {
+      "id": "rh002",
+      "date": "2024-10-09",
+      "time": "09:21",
+      "action": "Favorite",
+      "resumeId": "3",
+      "resume": "Oct 05, 2024 (3)",
+      "link": "#"
+    },
+    {
+      "id": "rh003",
+      "date": "2024-10-08",
+      "time": "21:05",
+      "action": "Delete",
+      "resumeId": "2",
+      "resume": "Oct 02, 2024 (2)",
+      "link": "#"
+    },
+    {
+      "id": "rh004",
+      "date": "2024-10-08",
+      "time": "21:15",
+      "action": "Edit",
+      "resumeId": "4",
+      "resume": "CV của tôi",
+      "link": "#"
+    }
+  ]
+}

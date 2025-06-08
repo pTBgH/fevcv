@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { JobFilterSidebar } from "@/components/job/job-filter-sidebar"
 import { FilterBar } from "@/components/job/filter-bar"
 import { getArchivedJobs } from "@/lib/job-service"
+import { MinimalNav } from "@/components/home/minimal-nav"
 
 export default function ArchivedJobsPage() {
   const { t } = useLanguage()
@@ -124,6 +125,7 @@ export default function ArchivedJobsPage() {
 
   return (
     <div className="space-y-6">
+      <MinimalNav />
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">{t("dashboard.archivedJobs")}</h1>
         <DisplayModeSelector onChange={setDisplayMode} currentMode={displayMode} />

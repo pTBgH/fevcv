@@ -18,10 +18,14 @@ module.exports = {
     },
     extend: {
       colors: {
+        'brand-cream': '#FDFAF6',
+        'brand-dark-gray': '#343434',
+        'brand-background': '#F0F0F0',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        // background: "hsl(var(--background))",
+        background: "#F0F0F0",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",

@@ -1,4 +1,5 @@
 export interface Job {
+  experienceLevel: string
   id: string | number
   title: string
   link: string

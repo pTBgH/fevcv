@@ -48,21 +48,17 @@ export const CVCard = forwardRef<HTMLDivElement, CVCardProps>(
     return (
       <div
         ref={ref}
-        className={`relative border rounded-lg cursor-pointer transition-colors ${
-          isSelected ? "bg-black text-white" : "bg-white hover:border-gray-300"
+        className={`relative border rounded-lg cursor-pointer transition-colors p-3 group ${
+          isSelected ? "bg-black text-white border-transparent" : "bg-brand-cream text-black border border-brand-dark-gray hover:bg-brand-dark-gray/80"
         }`}
         onClick={onSelect}
       >
-        <button
-          className="absolute top-2 right-2 p-1 hover:bg-gray-200 hover:text-black rounded"
-          onClick={handleViewClick}
-        >
-          <ExternalLink className="h-4 w-4" />
-        </button>
-
-        <div className="p-3">
+        <div className="pt-1">
           <div className="flex items-center">
-            <button className="mr-2 p-1 hover:bg-gray-200 hover:text-black rounded" onClick={handleEditClick}>
+            <button 
+              className="mr-2 p-1 rounded-md group-[.bg-black]:text-white group-[.bg-brand-cream]:text-black group-[.bg-black]:hover:bg-brand-dark-gray group-[.bg-brand-cream]:hover:bg-brand-cream-darker"
+              onClick={handleEditClick}
+            >
               <Edit className="h-4 w-4" />
             </button>
             {isEditing ? (
@@ -72,13 +68,13 @@ export const CVCard = forwardRef<HTMLDivElement, CVCardProps>(
                 onChange={(e) => setTitle(e.target.value)}
                 onBlur={handleSaveEdit}
                 onKeyPress={(e) => e.key === "Enter" && handleSaveEdit()}
-                className="flex-1 truncate border-b-2 bg-transparent focus:outline-none"
+                className="flex-1 truncate border-b-2 bg-transparent focus:outline-none focus:border-brand-dark-gray text-inherit"
                 autoFocus
               />
             ) : (
-              <span className="flex-1 truncate">{title}</span>
+              <span className="flex-1 truncate font-medium">{title}</span>
             )}
-            <button className="ml-2 p-1 hover:bg-gray-200 hover:text-black rounded" onClick={handleToggleFavorite}>
+            <button className="ml-2 p-1 rounded-md group-[.bg-black]:text-white group-[.bg-brand-cream]:text-black group-[.bg-black]:hover:bg-brand-dark-gray group-[.bg-brand-cream]:hover:bg-brand-cream-darker" onClick={handleToggleFavorite}>
               <Heart className={`h-4 w-4 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
             </button>
           </div>

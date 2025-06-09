@@ -39,7 +39,7 @@ This document outlines the key areas where your Next.js frontend should connect 
 - `lib/cv-service.ts` - Replace mock data with API calls
 - `app/upload/page.tsx` - For resume upload functionality
 - `app/upload/review/page.tsx` - For resume review and editing
-- `app/dashboard/resumes/page.tsx` - For resume management
+- `app/resumes/page.tsx` - For resume management
 
 ### Recommendations:
 - Create Laravel API endpoints for:

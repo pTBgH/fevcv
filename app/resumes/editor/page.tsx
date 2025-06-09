@@ -1,4 +1,4 @@
-// app/dashboard/resumes/editor/page.tsx
+// app/resumes/editor/page.tsx
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -8,10 +8,10 @@ import { CVCard } from "@/components/resume/cv-card"; // CVCard mới hoặc CVC
 import { ExtractedZone } from "@/components/resume/extracted-zone"; // Component để hiển thị và edit thông tin
 import { ResumeViewer } from "@/components/resume/resume-viewer"; // Component hiển thị ảnh CV
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { 
-  fetchResumes, 
-  selectActiveResumes, 
-  selectSelectedResumeId, 
+import {
+  fetchResumes,
+  selectActiveResumes,
+  selectSelectedResumeId,
   setSelectedResume as setSelectedResumeAction, // Đổi tên để tránh trùng
   updateResume,
   toggleFavorite as toggleFavoriteAction,
@@ -20,8 +20,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useToastContext } from "@/components/common/toast-provider";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Resume } from "@/lib/types";
-import { FileText, Upload } from "lucide-react";
-
+import { FileText, Upload, ExternalLink } from "lucide-react";
 
 interface ExtractedData {
   degree: string;
@@ -42,7 +41,8 @@ export default function ResumeEditorPage() {
   const resumesLoading = useAppSelector((state) => state.resumes.loading);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedResumeForEditing, setSelectedResumeForEditing] = useState<Resume | null>(null);
+  const [selectedResumeForEditing, setSelectedResumeForEditing] =
+    useState<Resume | null>(null);
   const [editedData, setEditedData] = useState<ExtractedData>({
     degree: "",
     technicalSkills: "",
@@ -64,33 +64,63 @@ export default function ResumeEditorPage() {
       const foundResume = allResumes.find((r) => r.id === targetCvId);
       if (foundResume) {
         setSelectedResumeForEditing(foundResume);
-        setEditedData(foundResume.data || { degree: "", technicalSkills: "", softSkills: "", experience: "" });
+        setEditedData(
+          foundResume.data || {
+            degree: "",
+            technicalSkills: "",
+            softSkills: "",
+            experience: "",
+          }
+        );
         // Dispatch action để cập nhật selectedResumeId trong store nếu nó đến từ URL và khác với store
         if (targetCvId !== selectedResumeIdFromStore) {
-            dispatch(setSelectedResumeAction(targetCvId));
+          dispatch(setSelectedResumeAction(targetCvId));
         }
       } else if (allResumes.length > 0 && !foundResume) {
         // Nếu cvId từ URL không hợp lệ, chọn cái đầu tiên
         setSelectedResumeForEditing(allResumes[0]);
-        setEditedData(allResumes[0].data || { degree: "", technicalSkills: "", softSkills: "", experience: "" });
+        setEditedData(
+          allResumes[0].data || {
+            degree: "",
+            technicalSkills: "",
+            softSkills: "",
+            experience: "",
+          }
+        );
         dispatch(setSelectedResumeAction(allResumes[0].id));
       }
     } else if (allResumes.length > 0 && !targetCvId) {
       // Nếu không có cvId nào được chỉ định, chọn cái đầu tiên
       setSelectedResumeForEditing(allResumes[0]);
-      setEditedData(allResumes[0].data || { degree: "", technicalSkills: "", softSkills: "", experience: "" });
+      setEditedData(
+        allResumes[0].data || {
+          degree: "",
+          technicalSkills: "",
+          softSkills: "",
+          experience: "",
+        }
+      );
       dispatch(setSelectedResumeAction(allResumes[0].id));
     }
   }, [allResumes, selectedResumeIdFromStore, searchParams, dispatch]);
 
-
-  const handleSelectResume = useCallback((cv: Resume) => {
-    setSelectedResumeForEditing(cv);
-    setEditedData(cv.data || { degree: "", technicalSkills: "", softSkills: "", experience: "" });
-    dispatch(setSelectedResumeAction(cv.id));
-    setIsEditing(false); // Reset edit mode khi chuyển CV
-    router.push(`/dashboard/resumes/editor?cvId=${cv.id}`, { scroll: false });
-  }, [dispatch, router]);
+  const handleSelectResume = useCallback(
+    (cv: Resume) => {
+      setSelectedResumeForEditing(cv);
+      setEditedData(
+        cv.data || {
+          degree: "",
+          technicalSkills: "",
+          softSkills: "",
+          experience: "",
+        }
+      );
+      dispatch(setSelectedResumeAction(cv.id));
+      setIsEditing(false); // Reset edit mode khi chuyển CV
+      router.push(`/resumes/editor?cvId=${cv.id}`, { scroll: false });
+    },
+    [dispatch, router]
+  );
 
   const handleEditToggle = () => setIsEditing(!isEditing);
 
@@ -100,7 +130,12 @@ export default function ResumeEditorPage() {
 
   const handleSaveChanges = () => {
     if (selectedResumeForEditing) {
-      dispatch(updateResume({ id: selectedResumeForEditing.id, data: { ...selectedResumeForEditing, data: editedData } }));
+      dispatch(
+        updateResume({
+          id: selectedResumeForEditing.id,
+          data: { ...selectedResumeForEditing, data: editedData },
+        })
+      );
       toast({ title: t("resume.saveSuccess"), type: "success" });
       setIsEditing(false);
     }
@@ -108,34 +143,55 @@ export default function ResumeEditorPage() {
 
   const handleDiscardChanges = () => {
     if (selectedResumeForEditing) {
-      setEditedData(selectedResumeForEditing.data || { degree: "", technicalSkills: "", softSkills: "", experience: "" });
+      setEditedData(
+        selectedResumeForEditing.data || {
+          degree: "",
+          technicalSkills: "",
+          softSkills: "",
+          experience: "",
+        }
+      );
     }
     setIsEditing(false);
   };
-  
+
   const handleToggleFavorite = (id: string) => {
     dispatch(toggleFavoriteAction(id));
-    const resume = allResumes.find(r => r.id === id);
+    const resume = allResumes.find((r) => r.id === id);
     toast({
-      title: resume?.isFavorite ? t("resume.removedFromFavorites") : t("resume.addedToFavorites"),
+      title: resume?.isFavorite
+        ? t("resume.removedFromFavorites")
+        : t("resume.addedToFavorites"),
       type: "success",
     });
   };
 
   const handleUploadNew = () => {
-    router.push('/upload');
+    router.push("/upload");
+  };
+
+  const handleSuggest = () => {
+    router.push("/resumes/suggestions");
   };
 
   if (resumesLoading && allResumes.length === 0) {
-    return <div className="flex justify-center items-center h-screen">{t("common.loading")}</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        {t("common.loading")}
+      </div>
+    );
   }
 
   if (allResumes.length === 0 && !resumesLoading) {
-     return (
+    return (
       <div className="flex flex-col items-center justify-center h-screen p-4">
         <FileText size={64} className="text-gray-400 mb-4" />
-        <h2 className="text-xl font-semibold mb-2">{t("resume.noResumesFound")}</h2>
-        <p className="text-gray-500 mb-6 text-center">{t("resume.uploadYourFirstResumeToEdit")}</p>
+        <h2 className="text-xl font-semibold mb-2">
+          {t("resume.noResumesFound")}
+        </h2>
+        <p className="text-gray-500 mb-6 text-center">
+          {t("resume.uploadYourFirstResumeToEdit")}
+        </p>
         <Button onClick={handleUploadNew}>
           <Upload className="mr-2 h-4 w-4" />
           {t("common.uploadResume")}
@@ -144,28 +200,23 @@ export default function ResumeEditorPage() {
     );
   }
 
-
   return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden">
+    <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-brand-background">
       <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center shrink-0">
-        <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+        <h1 className="text-xl font-semibold text-black dark:text-white">
           {t("dashboard.resumesEditor") || "Resumes Editor"}
         </h1>
         <div className="flex items-center gap-2">
-         {isEditing ? (
+          {isEditing ? (
             <>
               <Button variant="outline" onClick={handleDiscardChanges}>
                 {t("common.cancel")}
               </Button>
-              <Button onClick={handleSaveChanges}>
-                {t("common.save")}
-              </Button>
+              <Button onClick={handleSaveChanges}>{t("common.save")}</Button>
             </>
           ) : (
             selectedResumeForEditing && (
-                 <Button onClick={handleEditToggle}>
-                {t("common.edit")}
-              </Button>
+              <Button onClick={handleEditToggle}>{t("common.edit")}</Button>
             )
           )}
         </div>
@@ -173,32 +224,50 @@ export default function ResumeEditorPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar: List of Resumes */}
-        <aside className="w-64 bg-gray-50 dark:bg-gray-800 p-4 border-r dark:border-gray-700 overflow-y-auto">
+        <aside className="w-100 p-4 border-r dark:border-gray-700 overflow-y-auto">
           <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">{t("resume.yourResumes")}</h2>
-             {/* Optional: Icons like delete all or favorite all if needed */}
+            <h2 className="text-lg font-semibold text-black">
+              {t("resume.yourResumes")}
+            </h2>
+            {/* Optional: Icons like delete all or favorite all if needed */}
           </div>
-          <ScrollArea className="h-[calc(100vh-200px)] pr-2"> {/* Adjust height as needed */}
+          <ScrollArea className="h-[calc(100vh-250px)] pr-2">
             <div className="space-y-2">
               {allResumes.map((cv) => (
-                <CVCard
-                  key={cv.id}
-                  cv={cv}
-                  isSelected={selectedResumeForEditing?.id === cv.id}
-                  onSelect={() => handleSelectResume(cv)}
-                  isFavorite={cv.isFavorite}
-                  onToggleFavorite={(id) => {
-                    // e.stopPropagation(); // Important to prevent select if user clicks only favorite
-                    handleToggleFavorite(id);
-                  }}
-                  // Removed onRenameClick, onDuplicateClick, onDeleteClick, as they might not be needed here or handled by CVCard itself via context menu
-                />
+                <div key={cv.id} className="flex items-center gap-2">
+                  <CVCard
+                    cv={cv}
+                    isSelected={selectedResumeForEditing?.id === cv.id}
+                    onSelect={() => handleSelectResume(cv)}
+                    isFavorite={cv.isFavorite}
+                    onToggleFavorite={(id) => {
+                      handleToggleFavorite(id);
+                    }}
+                  />
+                  {selectedResumeForEditing?.id === cv.id && cv.fileUrl && (
+                    <button
+                      className="p-2 rounded-md bg-white text-black hover:bg-gray-200"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent selecting the card again
+                        window.open(cv.fileUrl, "_blank");
+                      }}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
           </ScrollArea>
-          <Button className="w-full mt-4" onClick={handleUploadNew}>
+          <Button className="w-full mt-4 bg-black text-white hover:bg-brand-dark-gray">
             <Upload className="mr-2 h-4 w-4" />
             {t("common.uploadResume")}
+          </Button>
+          <Button
+            className="w-full mt-2 bg-black text-white hover:bg-brand-dark-gray"
+            onClick={handleSuggest}
+          >
+            Suggest
           </Button>
         </aside>
 
@@ -219,20 +288,20 @@ export default function ResumeEditorPage() {
         </main>
 
         {/* Right Sidebar: Resume Preview */}
-        <aside className="w-1/3 bg-gray-50 dark:bg-gray-800 p-4 border-l dark:border-gray-700 overflow-hidden hidden lg:block">
-          <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-200">
+        <aside className="w-1/3 bg-white p-4 border-l dark:border-gray-700 overflow-hidden hidden lg:block">
+          <h2 className="text-lg font-semibold mb-4 text-black">
             {t("resume.yourUploadedFile")}
           </h2>
           {selectedResumeForEditing ? (
-             <div className="h-[calc(100vh-120px)] relative"> {/* Adjust height as needed */}
-                <ResumeViewer
-                    resume={selectedResumeForEditing}
-                    open={true} // Always open in this layout
-                    onOpenChange={() => {}} // No need to change open state from here
-                />
-             </div>
+            <div className="h-[calc(100vh-120px)] relative p-2 border border-brand-dark-gray rounded-lg">
+              <ResumeViewer
+                resume={selectedResumeForEditing}
+                open={true} // Always open in this layout
+                onOpenChange={() => {}} // No need to change open state from here
+              />
+            </div>
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center h-full text-brand-dark-gray">
               {t("resume.noCvSelected")}
             </div>
           )}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { signIn } from "next-auth/react";
 
 export function MinimalNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -47,11 +48,9 @@ export function MinimalNav() {
             >
               FAQs
             </Link>
-            <Link href="/auth">
-              <Button size="sm" variant="outline" className="ml-2">
+              <Button onClick={() => signIn("keycloak")}>
                 Sign In
               </Button>
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}

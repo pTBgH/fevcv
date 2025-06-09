@@ -224,7 +224,7 @@ export default function ResumeEditorPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar: List of Resumes */}
-        <aside className="w-100 p-4 border-r dark:border-gray-700 overflow-y-auto">
+        <aside className="w-100 p-4 dark:border-gray-700 overflow-y-auto">
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-lg font-semibold text-black">
               {t("resume.yourResumes")}
@@ -244,17 +244,6 @@ export default function ResumeEditorPage() {
                       handleToggleFavorite(id);
                     }}
                   />
-                  {selectedResumeForEditing?.id === cv.id && cv.fileUrl && (
-                    <button
-                      className="p-2 rounded-md bg-white text-black hover:bg-gray-200"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent selecting the card again
-                        window.open(cv.fileUrl, "_blank");
-                      }}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </button>
-                  )}
                 </div>
               ))}
             </div>

@@ -1,9 +1,10 @@
 import type React from "react"
 import { forwardRef, useState } from "react"
-import { Heart, ExternalLink, Edit } from "lucide-react"
+import { Heart, SquareArrowOutUpRight, Edit } from "lucide-react"
 import type { Resume } from "@/lib/types"
 import { useAppDispatch } from "@/lib/redux/hooks"
 import { toggleFavorite } from "@/lib/redux/slices/resumeSlice"
+import ExternalSquareArrow from '@/components/icons/SquareArrowOutSharp';
 
 interface CVCardProps {
   cv: Resume
@@ -48,41 +49,50 @@ export const CVCard = forwardRef<HTMLDivElement, CVCardProps>(
     return (
       <div
         ref={ref}
-        className={`relative border rounded-lg cursor-pointer transition-colors p-3 group ${
-          isSelected ? "bg-black text-white border-transparent" : "bg-brand-cream text-black border border-brand-dark-gray hover:bg-brand-dark-gray/80"
-        }`}
+        className="relative border rounded-lg cursor-pointer transition-colors p-3 group bg-brand-background text-black border border-black hover:bg-gray-100"
         onClick={onSelect}
       >
-        <div className="pt-1">
-          <div className="flex items-center">
-            <button 
-              className="mr-2 p-1 rounded-md group-[.bg-black]:text-white group-[.bg-brand-cream]:text-black group-[.bg-black]:hover:bg-brand-dark-gray group-[.bg-brand-cream]:hover:bg-brand-cream-darker"
-              onClick={handleEditClick}
-            >
-              <Edit className="h-4 w-4" />
-            </button>
-            {isEditing ? (
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                onBlur={handleSaveEdit}
-                onKeyPress={(e) => e.key === "Enter" && handleSaveEdit()}
-                className="flex-1 truncate border-b-2 bg-transparent focus:outline-none focus:border-brand-dark-gray text-inherit"
-                autoFocus
-              />
-            ) : (
-              <span className="flex-1 truncate font-medium">{title}</span>
-            )}
-            <button className="ml-2 p-1 rounded-md group-[.bg-black]:text-white group-[.bg-brand-cream]:text-black group-[.bg-black]:hover:bg-brand-dark-gray group-[.bg-brand-cream]:hover:bg-brand-cream-darker" onClick={handleToggleFavorite}>
-              <Heart className={`h-4 w-4 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
-            </button>
-          </div>
+        {/* External link icon ở góc trên bên phải */}
+      <button
+        className="absolute -top-1 -right-1 "
+        onClick={(e) => {
+          e.stopPropagation();
+          window.open(cv.fileUrl, "_blank");
+        }}
+      >
+        <ExternalSquareArrow className="w-4 h-4 text-black bg-brand-background" />
+      </button>
+
+
+      <div className="pt-1">
+        <div className="flex items-center">
+          <button 
+            className="mr-2 p-1 rounded-md hover:bg-gray-200"
+            onClick={handleEditClick}
+          >
+            <Edit className="h-4 w-4" />
+          </button>
+          {isEditing ? (
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onBlur={handleSaveEdit}
+              onKeyPress={(e) => e.key === "Enter" && handleSaveEdit()}
+              className="flex-1 truncate border-b-2 bg-transparent focus:outline-none focus:border-black text-inherit"
+              autoFocus
+            />
+          ) : (
+            <span className="flex-1 truncate font-medium">{title}</span>
+          )}
+          <button className="ml-2 p-1 rounded-md hover:bg-gray-200" onClick={handleToggleFavorite}>
+            <Heart className={`h-4 w-4 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
+          </button>
         </div>
       </div>
-    )
-  },
-)
+    </div>
+  );
+})
 
 CVCard.displayName = "CVCard"
 

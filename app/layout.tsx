@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Providers } from "./providers"
+import { SessionProviderWrapper } from "./SessionProviderWrapper"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <SessionProviderWrapper>
+          <Providers>
+            {children}
+          </Providers>
+        </SessionProviderWrapper>
       </body>
     </html>
   )

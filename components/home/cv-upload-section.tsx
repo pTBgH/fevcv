@@ -4,7 +4,7 @@
 import type React from "react"
 import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { FileText, Upload } from "lucide-react"
+import { Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToastContext } from "@/components/common/toast-provider" // ĐÃ THAY ĐỔI
 import { useAppDispatch } from "@/lib/redux/hooks"
@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { useLanguage } from "@/lib/i18n/context"
 import { generateCVName } from "@/lib/cv-utils"
 import { getActiveResumes } from "@/lib/cv-service"
-
+import Image from "next/image"
 const allowedFormats = ["pdf", "doc", "docx", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 
 export function CVUploadSection() {
@@ -194,9 +194,12 @@ export function CVUploadSection() {
             onDrop={handleDrop}
           >
             <div className="flex justify-center mb-4 pointer-events-none">
-              <div className="p-3 bg-brand-background rounded-full">
-                <FileText className="h-8 w-8 text-brand-dark-gray" />
-              </div>
+                <Image
+                src="/pdf-doc-scan-svgrepo-com.svg"
+                alt="PDF icon"
+                width={64}
+                height={64}
+              />
             </div>
             <h3 className="text-lg font-bold mb-2 pointer-events-none text-black">
               {t("resume.dragFileOrClickToUpload")}

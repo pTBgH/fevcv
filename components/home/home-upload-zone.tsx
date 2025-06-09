@@ -1,9 +1,9 @@
 "use client"
 
 import type React from "react"
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { FileText, Upload } from "lucide-react"
+import { FileText, ArrowUp } from "lucide-react" // Thay Upload bằng ArrowUp
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { useAppDispatch } from "@/lib/redux/hooks"
@@ -49,11 +49,11 @@ export function CVUploadSection() {
 
   const handleProcessAndNavigate = (selectedFile: File) => {
     if (!validateFile(selectedFile)) {
-      return;
+      return
     }
 
-    const existingResumeNames = getActiveResumes().map(r => r.title);
-    const newResumeName = generateCVName(existingResumeNames);
+    const existingResumeNames = getActiveResumes().map((r) => r.title)
+    const newResumeName = generateCVName(existingResumeNames)
 
     const newResume = {
       id: Date.now().toString(),
@@ -72,39 +72,42 @@ export function CVUploadSection() {
         softSkills: "",
         experience: "",
       },
-    };
+    }
 
-    dispatch(addResume(newResume));
+    dispatch(addResume(newResume))
 
     showToast({
       title: t("toast.cvUploaded"),
       description: `${selectedFile.name} - ${t("toast.redirectingToReview") || "Redirecting to review..."}`,
-    });
+    })
 
-    router.push(`/upload/review?cvId=${newResume.id}`);
+    router.push(`/upload/review?cvId=${newResume.id}`)
   }
 
-  const handleFileUpload = useCallback((selectedFile: File) => {
-    if (!isAuthenticated) {
-      const fileReader = new FileReader();
-      fileReader.onload = (e) => {
-        if (e.target?.result) {
-          sessionStorage.setItem(
-            "pendingUploadFile",
-            JSON.stringify({
-              name: selectedFile.name,
-              type: selectedFile.type,
-              data: e.target.result as string,
-            })
-          );
-          requireAuth();
+  const handleFileUpload = useCallback(
+    (selectedFile: File) => {
+      if (!isAuthenticated) {
+        const fileReader = new FileReader()
+        fileReader.onload = (e) => {
+          if (e.target?.result) {
+            sessionStorage.setItem(
+              "pendingUploadFile",
+              JSON.stringify({
+                name: selectedFile.name,
+                type: selectedFile.type,
+                data: e.target.result as string,
+              })
+            )
+            requireAuth()
+          }
         }
-      };
-      fileReader.readAsDataURL(selectedFile);
-      return;
-    }
-    handleProcessAndNavigate(selectedFile);
-  }, [isAuthenticated, requireAuth, dispatch, router, t, showToast, handleProcessAndNavigate]);
+        fileReader.readAsDataURL(selectedFile)
+        return
+      }
+      handleProcessAndNavigate(selectedFile)
+    },
+    [isAuthenticated, requireAuth, dispatch, router, t, showToast, handleProcessAndNavigate]
+  )
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -135,78 +138,62 @@ export function CVUploadSection() {
   }
 
   return (
-    <div className="py-20 bg-brand-background flex flex-col lg:flex-row items-center">
-      {/* Left side - Text content */}
-      <div className="lg:w-1/2 mb-10 lg:mb-0 lg:pr-12 text-center lg:text-left">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-          {t('home.heroTitleCVSectionA') || "Find your next job"}
-          <br />
-          {t('home.heroTitleCVSectionB') || "in seconds"}
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-          {t('home.heroSubtitleCVSection') || "We know job hunting can be overwhelming. That's why we created a simple—just upload your CV, and we'll instantly show you jobs that match your skills and experience."}
-        </p>
-        <Button size="lg" className="flex items-center gap-2 mx-auto lg:mx-0 bg-black text-white hover:bg-gray-800" onClick={() => triggerFileInput(fileInputRefButton)}>
-          <Upload className="h-5 w-5" />
-          {t('common.uploadResume') || "Upload Resume"}
-        </Button>
-        <input
-          id="file-upload-button"
-          type="file"
-          className="hidden"
-          accept={allowedFormats.map(f => `.${f}`).join(",")}
-          onChange={handleFileInput}
-          ref={fileInputRefButton}
-        />
-      </div>
-
-      {/* Right side - Upload zone */}
-      <div className="lg:w-1/2">
-        <div
-          className={`border-2 border-dashed rounded-lg p-8 text-center bg-brand-cream cursor-pointer ${isDragging ? "border-black-500 dark:bg-blue-900/20" : "border-gray-300 dark:border-gray-700 hover:border-black-500 dark:hover:border-blue-600"}`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={() => triggerFileInput(fileInputRefDropzone)}
-        >
-          <div className="flex justify-center mb-4 pointer-events-none">
-            <div className="p-3 bg-brand-background dark:bg-gray-800 rounded-full">
-              <FileText className="h-8 w-8 text-gray-500 dark:text-gray-400" />
-            </div>
-          </div>
-          <h3 className="text-lg font-medium mb-2 pointer-events-none">{t('home.dragDropCVTitle') || "Just drop your CV below, we'll handle the rest"}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 pointer-events-none">{t('home.dragDropCVSubtitle') || "Drag and drop here or click to upload"}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={(e) => {
-              e.stopPropagation();
-              triggerFileInput(fileInputRefDropzone);
-            }}
-          >
-            {t('home.browseFiles') || "Browse files"}
-          </Button>
-          <input
-            id="dropzone-file-input"
-            type="file"
-            className="hidden"
-            accept={allowedFormats.map(f => `.${f}`).join(",")}
-            onChange={handleFileInput}
-            ref={fileInputRefDropzone}
-          />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 pointer-events-none">
-            {t('resume.supportForPdfDocDocx') || "Supported formats: PDF, DOC, DOCX (max 5MB)"}
-          </p>
+    <div className="bg-gray-50 min-h-screen w-full flex items-center justify-center">
+      <div className="container mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 px-6 py-20">
+        {/* Left side - Text content */}
+        <div className="lg:w-1/2 text-center lg:text-left">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-black">
+                {t("home.heroTitleCVSectionA") || "Find your next job in seconds"}
+            </h1>
+            <p className="text-lg text-gray-500 mb-8 max-w-lg mx-auto lg:mx-0">
+                {t("home.heroSubtitleCVSection") || "We know job hunting can be overwhelming. That's why we make it simple — just upload your CV, and we'll instantly show you jobs that actually match your skills and background."}
+            </p>
+            <Button size="lg" className="rounded-md flex items-center gap-2 mx-auto lg:mx-0 bg-black text-white hover:bg-gray-800 px-6 py-6" onClick={() => triggerFileInput(fileInputRefButton)}>
+                {t("common.uploadResume") || "Upload Resume"}
+                <ArrowUp className="h-5 w-5" />
+            </Button>
+            <input
+                id="file-upload-button"
+                type="file"
+                className="hidden"
+                accept={allowedFormats.map((f) => `.${f}`).join(",")}
+                onChange={handleFileInput}
+                ref={fileInputRefButton}
+            />
         </div>
-        <div className="mt-4">
-          <Button
-            variant="ghost"
-            className="w-full py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-            onClick={() => router.push("/search?mode=suggest")}
-          >
-            {t('home.getFreeJobSuggestion') || "Get free jobs suggestion"}
-          </Button>
+
+        {/* Right side - Upload zone */}
+        <div className="lg:w-1/2 w-full max-w-md">
+            <div
+                className={`w-full rounded-2xl p-8 text-center bg-white cursor-pointer transition-colors duration-200 border-2 border-dashed ${isDragging ? "border-black" : "border-gray-200 hover:border-gray-400"}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => triggerFileInput(fileInputRefDropzone)}
+            >
+                <div className="flex justify-center mb-4 pointer-events-none">
+                    <FileText className="h-10 w-10 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2 pointer-events-none text-black">{t("home.dragDropCVTitle") || "Just drop your CV below, we'll handle the rest"}</h3>
+                <p className="text-sm text-gray-500 mb-4 pointer-events-none">{t("home.dragDropCVSubtitle") || "Drag and drop here or click to upload"}</p>
+                <input
+                    id="dropzone-file-input"
+                    type="file"
+                    className="hidden"
+                    accept={allowedFormats.map((f) => `.${f}`).join(",")}
+                    onChange={handleFileInput}
+                    ref={fileInputRefDropzone}
+                />
+            </div>
+            <div className="mt-4">
+                <Button
+                    variant="ghost"
+                    className="w-full py-3 rounded-md bg-gray-100 text-gray-900 font-medium hover:bg-gray-200"
+                    onClick={() => router.push("/search?mode=suggest")}
+                >
+                    {t("home.getFreeJobSuggestion") || "Get free jobs suggestion"}
+                </Button>
+            </div>
         </div>
       </div>
     </div>

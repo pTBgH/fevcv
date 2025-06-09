@@ -112,7 +112,7 @@ export function CVUploadSection() {
   }, [isAuthenticated, requireAuth, dispatch, router, t, toast]);
 
 
-  const handleDragOver = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   }, []);
@@ -121,7 +121,7 @@ export function CVUploadSection() {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -159,15 +159,15 @@ export function CVUploadSection() {
     <div className="py-20 flex flex-col lg:flex-row items-center">
       {/* Left side - Text content */}
       <div className="lg:w-1/2 mb-10 lg:mb-0 lg:pr-12 text-center lg:text-left">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-black">
           {t("home.heroTitle")}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+        <p className="text-lg text-brand-dark-gray mb-8">
           {t("home.heroSubtitle")}
         </p>
         <Button 
             size="lg" 
-            className="flex items-center gap-2 mx-auto lg:mx-0"
+            className="flex items-center gap-2 mx-auto lg:mx-0 bg-black text-white hover:bg-brand-dark-gray border border-brand-cream rounded-md px-8 py-6"
             onClick={() => fileInputRefButton.current?.click()} // Trigger file input
         >
           <Upload className="h-5 w-5" />
@@ -184,56 +184,41 @@ export function CVUploadSection() {
       </div>
 
       {/* Right side - Upload zone */}
-      <div className="lg:w-1/2 w-full">
-        {/* Phần tử label bao quanh div kéo thả để toàn bộ vùng đều có thể click */}
-        <label
-          htmlFor="dropzone-file-input-cv-section" // Unique ID
-          className={`block border-2 border-dashed rounded-lg p-8 text-center cursor-pointer ${
-            isDragging ? "border-primary bg-primary/10 dark:bg-primary/20" : "border-gray-300 dark:border-gray-700 hover:border-primary/70 dark:hover:border-primary/50"
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          // onClick={() => fileInputRefDropzone.current?.click()} // Click label sẽ tự động trigger input nếu htmlFor đúng
-        >
-          <input 
-              id="dropzone-file-input-cv-section" // Unique ID và phải khớp với htmlFor của label
+      <div className="lg:w-1/2 w-full flex justify-center">
+        <div className="bg-brand-cream rounded-3xl p-8 w-full max-w-xl flex flex-col items-center">
+          <div
+            className="w-full border-2 border-dashed border-brand-dark-gray rounded-2xl p-8 bg-transparent flex flex-col items-center justify-center cursor-pointer"
+            onClick={() => fileInputRefDropzone.current?.click()}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <div className="flex justify-center mb-4 pointer-events-none">
+              <div className="p-3 bg-brand-background rounded-full">
+                <FileText className="h-8 w-8 text-brand-dark-gray" />
+              </div>
+            </div>
+            <h3 className="text-lg font-bold mb-2 pointer-events-none text-black">
+              {t("resume.dragFileOrClickToUpload")}
+            </h3>
+            <p className="text-base text-brand-dark-gray mb-4 pointer-events-none">
+              PDF, DOC, DOCX (max 5MB)
+            </p>
+            <input 
+              id="dropzone-file-input-cv-section"
               type="file" 
               className="hidden" 
               accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
               onChange={handleFileInput}
               ref={fileInputRefDropzone}
-          />
-          <div className="flex justify-center mb-4 pointer-events-none">
-            <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full">
-              <FileText className="h-8 w-8 text-gray-500 dark:text-gray-400" />
-            </div>
+            />
           </div>
-          <h3 className="text-lg font-medium mb-2 pointer-events-none text-gray-700 dark:text-gray-200">
-            {t("resume.dragFileOrClickToUpload")}
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 pointer-events-none">
-            PDF, DOC, DOCX (max 5MB)
-          </p>
-          {/* Nút Browse này có thể không cần thiết nếu toàn bộ dropzone đã clickable */}
-          <Button 
-            asChild // Để Button render như một label và không chặn sự kiện click
-            variant="outline" 
-            size="sm" 
-            className="pointer-events-auto dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-          >
-             {/* Bọc nút browse trong label riêng, không làm cả dropzone là label cho cùng 1 input */}
-             {/* Hoặc, nếu muốn nút Browse cũng trigger thì nó nên là một button riêng biệt gọi fileInputRefDropzone.current.click() */}
-             <span>{t("common.browseFiles") || "Browse files"}</span>
-          </Button>
-        </label>
-        <div className="mt-4">
           <Button
             variant="ghost"
-            className="w-full py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+            className="w-full mt-8 py-4 bg-brand-cream text-brand-dark-gray font-medium rounded-2xl hover:bg-brand-dark-gray hover:text-white"
             onClick={() => router.push('/search')}
           >
-            {t("home.getJobSuggestions") || "Get free jobs suggestion"} {/* Sửa key nếu cần */}
+            {t("home.getJobSuggestions") || "Get free jobs suggestion"}
           </Button>
         </div>
       </div>

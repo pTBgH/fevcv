@@ -87,51 +87,21 @@ export function QuickGuideSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-gray-100"
+      className="relative bg-background"
       // 1. TẠO "ĐƯỜNG BĂNG": Đặt chiều cao lớn để có không gian cuộn dọc
       style={{ height: "300vh" }}
     >
       {/* 2. "GHIM" NỘI DUNG: Container này sẽ dính vào top khi cuộn */}
       <div ref={sliderContainerRef} className="sticky top-0 h-screen overflow-hidden">
-        <div className="container mx-auto px-4 h-full">
+        <div className="container mx-auto px-4 h-full bg-brand-cream">
           <div className="flex flex-col md:flex-row h-full">
             {/* Left side - Fixed title */}
-            <div className="w-full md:w-1/3 flex flex-col justify-center pr-8">
-              <h2 className="text-5xl md:text-7xl font-bold mb-6">
-                Simple
-                <br />
-                guide
-              </h2>
-              <p className="text-xl text-gray-600 mb-8 md:mb-12">
-                Get job recommendations with a few simple steps
-              </p>
-
-              {/* Step indicators */}
-              <div className="hidden md:flex flex-col space-y-4 mt-8">
-                {steps.map((step, index) => (
-                  <button
-                    key={index}
-                    className={`flex items-center text-left transition-all duration-300 ${
-                      index === activeIndex ? "opacity-100" : "opacity-50"
-                    }`}
-                    onClick={() => scrollToStep(index)}
-                  >
-                    <div
-                      className={`w-3 h-3 rounded-full mr-3 transition-all duration-300 ${
-                        index === activeIndex ? "bg-black scale-125" : "bg-gray-400"
-                      }`}
-                    />
-                    <span className="text-sm font-medium">Step {index + 1}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
 
             {/* Right side - Scrollable steps */}
             <div
               ref={sliderRef}
               // Ngăn người dùng cuộn ngang thủ công, chỉ cho phép cuộn qua JS
-              className="w-full md:w-2/3 overflow-x-hidden flex items-center"
+              className="w-full md:w-3/3 overflow-x-hidden flex items-center"
             >
               <div className="flex">
                 {steps.map((step, index) => (
@@ -145,7 +115,7 @@ export function QuickGuideSection() {
                         <h4 className="text-3xl md:text-4xl font-bold mb-6">{step.title}</h4>
                         <p className="text-lg text-gray-600 mb-8">{step.description}</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-8 flex items-center justify-center">
+                      <div className="bg-brand-background rounded-lg p-8 flex items-center justify-center">
                         <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
                           {step.icon}
                         </div>

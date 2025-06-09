@@ -13,7 +13,7 @@ export function HomeClient() {
 
       <main className="flex-grow">
         {/* Hero Section with CV Upload */}
-        <section className="bg-gray-50 dark:bg-gray-900">
+        <section className="bg-brand-background">
           <div className="container mx-auto px-4">
             <CVUploadSection />
           </div>

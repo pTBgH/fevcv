@@ -94,7 +94,7 @@ export function OurServicesSection() {
   }, [])
 
   return (
-    <div ref={sectionRef} className="relative py-24 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div ref={sectionRef} className="relative py-24 min-h-screen">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row">
           {/* Left side - Sticky heading and description */}

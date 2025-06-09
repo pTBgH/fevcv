@@ -1,12 +1,11 @@
-// components/home/cv-upload-section.tsx
 "use client"
 
 import type React from "react"
-import { useState, useCallback, useRef, useEffect } from "react" // Thêm useRef và useEffect
+import { useState, useCallback, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { FileText, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast" // Sử dụng useToast từ Shadcn
+import { useToast } from "@/hooks/use-toast"
 import { useAppDispatch } from "@/lib/redux/hooks"
 import { addResume } from "@/lib/redux/slices/resumeSlice"
 import { format } from "date-fns"
@@ -20,12 +19,12 @@ const allowedFormats = ["pdf", "doc", "docx"]
 export function CVUploadSection() {
   const [isDragging, setIsDragging] = useState(false)
   const router = useRouter()
-  const { toast: showToast } = useToast() // Đổi tên để tránh nhầm lẫn với Redux toast (nếu có)
+  const { toast: showToast } = useToast()
   const dispatch = useAppDispatch()
   const { isAuthenticated, requireAuth } = useAuth()
   const { t } = useLanguage()
-  const fileInputRefButton = useRef<HTMLInputElement>(null) // Ref cho input của nút
-  const fileInputRefDropzone = useRef<HTMLInputElement>(null) // Ref cho input của dropzone
+  const fileInputRefButton = useRef<HTMLInputElement>(null)
+  const fileInputRefDropzone = useRef<HTMLInputElement>(null)
 
   const validateFile = (fileToCheck: File): boolean => {
     const extension = fileToCheck.name.split(".").pop()?.toLowerCase()
@@ -37,9 +36,9 @@ export function CVUploadSection() {
       })
       return false
     }
-    if (fileToCheck.size > 5 * 1024 * 1024) { // Max 5MB
+    if (fileToCheck.size > 5 * 1024 * 1024) {
       showToast({
-        title: t("toast.fileTooLarge" as any) || "File too large", // ép kiểu nếu cần
+        title: t("toast.fileTooLarge" as any) || "File too large",
         description: t("toast.pleaseUploadFileSize" as any) || "Please upload a file smaller than 5MB",
         variant: "destructive",
       })
@@ -59,9 +58,9 @@ export function CVUploadSection() {
     const newResume = {
       id: Date.now().toString(),
       title: newResumeName,
-      date: format(new Date(), "MMM dd, yyyy"), // Redundant if `createdAt` is used for display
+      date: format(new Date(), "MMM dd, yyyy"),
       fileType: selectedFile.name.split(".").pop()?.toLowerCase() || "pdf",
-      fileUrl: URL.createObjectURL(selectedFile), // Create a temporary URL for the file
+      fileUrl: URL.createObjectURL(selectedFile),
       isNew: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -85,29 +84,27 @@ export function CVUploadSection() {
     router.push(`/upload/review?cvId=${newResume.id}`);
   }
 
-
   const handleFileUpload = useCallback((selectedFile: File) => {
-     if (!isAuthenticated) {
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-          if (e.target?.result) {
-            sessionStorage.setItem(
-              "pendingUploadFile",
-              JSON.stringify({
-                name: selectedFile.name,
-                type: selectedFile.type,
-                data: e.target.result as string,
-              })
-            );
-            requireAuth(); // Sẽ chuyển hướng, file sẽ được xử lý sau khi login thành công
-          }
-        };
-        fileReader.readAsDataURL(selectedFile);
-        return;
-      }
-      handleProcessAndNavigate(selectedFile);
+    if (!isAuthenticated) {
+      const fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        if (e.target?.result) {
+          sessionStorage.setItem(
+            "pendingUploadFile",
+            JSON.stringify({
+              name: selectedFile.name,
+              type: selectedFile.type,
+              data: e.target.result as string,
+            })
+          );
+          requireAuth();
+        }
+      };
+      fileReader.readAsDataURL(selectedFile);
+      return;
+    }
+    handleProcessAndNavigate(selectedFile);
   }, [isAuthenticated, requireAuth, dispatch, router, t, showToast, handleProcessAndNavigate]);
-
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -130,7 +127,6 @@ export function CVUploadSection() {
     if (e.target.files && e.target.files.length > 0) {
       handleFileUpload(e.target.files[0])
     }
-    // Reset giá trị của input để cho phép tải lại cùng một file
     e.target.value = ""
   }
 
@@ -139,19 +135,18 @@ export function CVUploadSection() {
   }
 
   return (
-    <div className="py-20 flex flex-col lg:flex-row items-center">
+    <div className="py-20 bg-brand-background flex flex-col lg:flex-row items-center">
       {/* Left side - Text content */}
       <div className="lg:w-1/2 mb-10 lg:mb-0 lg:pr-12 text-center lg:text-left">
         <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-          {t('home.heroTitleCVSectionA') || "Find your next job"} {/* Fallback */}
+          {t('home.heroTitleCVSectionA') || "Find your next job"}
           <br />
           {t('home.heroTitleCVSectionB') || "in seconds"}
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
           {t('home.heroSubtitleCVSection') || "We know job hunting can be overwhelming. That's why we created a simple—just upload your CV, and we'll instantly show you jobs that match your skills and experience."}
         </p>
-        {/* Button này sẽ trigger fileInputRefButton */}
-        <Button size="lg" className="flex items-center gap-2 mx-auto lg:mx-0" onClick={() => triggerFileInput(fileInputRefButton)}>
+        <Button size="lg" className="flex items-center gap-2 mx-auto lg:mx-0 bg-black text-white hover:bg-gray-800" onClick={() => triggerFileInput(fileInputRefButton)}>
           <Upload className="h-5 w-5" />
           {t('common.uploadResume') || "Upload Resume"}
         </Button>
@@ -167,36 +162,33 @@ export function CVUploadSection() {
 
       {/* Right side - Upload zone */}
       <div className="lg:w-1/2">
-        {/* Dropzone này sẽ trigger fileInputRefDropzone */}
         <div
-          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer ${ // Thêm cursor-pointer
-            isDragging ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600"
-          }`}
+          className={`border-2 border-dashed rounded-lg p-8 text-center bg-brand-cream cursor-pointer ${isDragging ? "border-black-500 dark:bg-blue-900/20" : "border-gray-300 dark:border-gray-700 hover:border-black-500 dark:hover:border-blue-600"}`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={() => triggerFileInput(fileInputRefDropzone)} // Thêm onClick để trigger input
+          onClick={() => triggerFileInput(fileInputRefDropzone)}
         >
-          <div className="flex justify-center mb-4 pointer-events-none"> {/* Thêm pointer-events-none */}
-            <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full">
+          <div className="flex justify-center mb-4 pointer-events-none">
+            <div className="p-3 bg-brand-background dark:bg-gray-800 rounded-full">
               <FileText className="h-8 w-8 text-gray-500 dark:text-gray-400" />
             </div>
           </div>
           <h3 className="text-lg font-medium mb-2 pointer-events-none">{t('home.dragDropCVTitle') || "Just drop your CV below, we'll handle the rest"}</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 pointer-events-none">{t('home.dragDropCVSubtitle') || "Drag and drop here or click to upload"}</p>
-          {/* Nút "Browse files" bên trong dropzone cũng trigger fileInputRefDropzone */}
           <Button
             variant="outline"
             size="sm"
+            className="text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={(e) => {
-              e.stopPropagation(); // Ngăn sự kiện click của div cha
+              e.stopPropagation();
               triggerFileInput(fileInputRefDropzone);
             }}
           >
             {t('home.browseFiles') || "Browse files"}
           </Button>
           <input
-            id="dropzone-file-input" // ID mới cho input này
+            id="dropzone-file-input"
             type="file"
             className="hidden"
             accept={allowedFormats.map(f => `.${f}`).join(",")}
@@ -210,8 +202,8 @@ export function CVUploadSection() {
         <div className="mt-4">
           <Button
             variant="ghost"
-            className="w-full py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-            onClick={() => router.push("/search?mode=suggest")} // Hoặc router.push("/upload") nếu bạn muốn mở trang upload
+            className="w-full py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+            onClick={() => router.push("/search?mode=suggest")}
           >
             {t('home.getFreeJobSuggestion') || "Get free jobs suggestion"}
           </Button>

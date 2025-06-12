@@ -13,20 +13,22 @@ export function QuickGuideSection() {
     {
       number: 1,
       title: "Upload a resume",
-      description: "Upload your resume in PDF, DOC, or DOCX format",
-      icon: <Upload className="h-12 w-12 text-gray-600" />,
+      gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaG1iY2djd3g0ajVpcjVjaHg4NXZvMGtnbWRoNmcwZDJkbmFjaXExZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7bu3abK1jsa9zUqc/giphy.gif", // Thay bằng link GIF của bạn
     },
     {
       number: 2,
       title: "Get matched with jobs",
-      description: "Our AI analyzes your skills and matches you with relevant job opportunities",
-      icon: <Search className="h-12 w-12 text-gray-600" />,
+      gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd245c3E3dXBiaWw2eDA0c3ZtMWk0bTdrMzhkM2w2bHFoc2ZkYm1ndSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l41Yk_3NfsoO322Aw/giphy.gif", // Thay bằng link GIF của bạn
     },
     {
       number: 3,
       title: "Apply with one click",
-      description: "Apply to jobs with a single click and track your applications",
-      icon: <CheckCircle className="h-12 w-12 text-gray-600" />,
+      gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2FwaTNwZXNwcjN5enZkNWNjdjV6aW5rYmhucmg4emVhcXBqdGgyOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WpTo23dpab4W6a0G3J/giphy.gif", // Thay bằng link GIF của bạn
+    },
+    {
+      number: 4,
+      title: "Apply with one click",
+      gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2FwaTNwZXNwcjN5enZkNWNjdjV6aW5rYmhucmg4emVhcXBqdGgyOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WpTo23dpab4W6a0G3J/giphy.gif", // Thay bằng link GIF của bạn
     },
   ];
 
@@ -44,11 +46,16 @@ export function QuickGuideSection() {
   // useEffect chính để xử lý hiệu ứng cuộn ngang
   useEffect(() => {
     const handleScroll = () => {
-      if (!sectionRef.current || !sliderRef.current || !sliderContainerRef.current) return;
+      if (
+        !sectionRef.current ||
+        !sliderRef.current ||
+        !sliderContainerRef.current
+      )
+        return;
 
       const sectionEl = sectionRef.current;
       const sliderEl = sliderRef.current;
-      
+
       // Lấy vị trí của section so với viewport
       const { top, height } = sectionEl.getBoundingClientRect();
       const sectionHeight = height;
@@ -67,11 +74,12 @@ export function QuickGuideSection() {
 
         // Cập nhật activeIndex dựa trên vị trí cuộn ngang
         const stepWidth = sliderEl.scrollWidth / steps.length;
-        const newActiveIndex = Math.floor((sliderEl.scrollLeft + stepWidth / 2) / stepWidth);
+        const newActiveIndex = Math.floor(
+          (sliderEl.scrollLeft + stepWidth / 2) / stepWidth
+        );
         if (newActiveIndex !== activeIndex) {
-            setActiveIndex(newActiveIndex);
+          setActiveIndex(newActiveIndex);
         }
-
       }
     };
 
@@ -83,7 +91,6 @@ export function QuickGuideSection() {
     };
   }, [activeIndex, steps.length]);
 
-
   return (
     <section
       ref={sectionRef}
@@ -92,33 +99,60 @@ export function QuickGuideSection() {
       style={{ height: "300vh" }}
     >
       {/* 2. "GHIM" NỘI DUNG: Container này sẽ dính vào top khi cuộn */}
-      <div ref={sliderContainerRef} className="sticky top-0 h-screen overflow-hidden">
-        <div className="container mx-auto px-4 h-full bg-brand-cream">
+      <div
+        ref={sliderContainerRef}
+        className="sticky top-0 h-screen overflow-hidden flex items-center justify-center"
+      >
+        <div className="w-4/5 h-4/5 bg-[#DDDDDD] rounded-2xl flex flex-col p-8 md:p-12">
           <div className="flex flex-col md:flex-row h-full">
-            {/* Left side - Fixed title */}
-
-            {/* Right side - Scrollable steps */}
             <div
               ref={sliderRef}
-              // Ngăn người dùng cuộn ngang thủ công, chỉ cho phép cuộn qua JS
               className="w-full md:w-3/3 overflow-x-hidden flex items-center"
             >
               <div className="flex">
+                <div className="w-[600px] px-32 flex flex-col justify-center">
+                  {/* Title block with Simple and guide stacked, no background */}
+                  <div className="w-full">
+                    <div className="flex flex-col pr-8">
+                      <h2 className="text-6xl lg:text-7xl font-bold text-gray-800">
+                        Simple
+                      </h2>
+                      <h2 className="text-6xl lg:text-7xl font-bold text-gray-800">
+                        guide
+                      </h2>
+                    </div>
+                    <p className="mt-4 text-lg text-gray-600">
+                      get job recommendation with a few steps
+                    </p>
+                  </div>
+                </div>
                 {steps.map((step, index) => (
                   <div
                     key={index}
-                    className="min-w-full px-4 flex items-center justify-center"
+                    className="w-[800px] px-16 flex items-center justify-center"
                   >
-                    <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 w-full max-w-md">
-                      <div className="mb-6 text-center">
-                        <h3 className="text-2xl font-semibold mb-2">Step {step.number}</h3>
-                        <h4 className="text-3xl md:text-4xl font-bold mb-6">{step.title}</h4>
-                        <p className="text-lg text-gray-600 mb-8">{step.description}</p>
+                    <div className="bg-brand-cream rounded-xl p-8 w-full flex flex-col">
+                      {/* --- PHẦN LAYOUT TRÁI/PHẢI --- */}
+                      {/* div này dùng flex và justify-between để đẩy các phần tử con ra 2 phía */}
+                      <div className="flex justify-between items-center mb-4">
+                        {/* Phần tử này sẽ nằm BÊN TRÁI */}
+                        <h3 className="text-2xl text-gray-500">
+                          Step {step.number}
+                        </h3>
+
+                        {/* Phần tử này sẽ nằm BÊN PHẢI */}
+                        <h4 className="text-2xl md:text-3xl text-right">
+                          {step.title}
+                        </h4>
                       </div>
-                      <div className="bg-brand-background rounded-lg p-8 flex items-center justify-center">
-                        <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
-                          {step.icon}
-                        </div>
+
+                      {/* Phần dưới: Ảnh GIF */}
+                      <div className="mt-4 w-full aspect-video">
+                        <img
+                          src={step.gif}
+                          alt={step.title}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
                       </div>
                     </div>
                   </div>
@@ -127,20 +161,7 @@ export function QuickGuideSection() {
             </div>
           </div>
         </div>
-
         {/* Mobile step indicators */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex justify-center space-x-4 md:hidden">
-          {steps.map((_, index) => (
-            <button
-              key={index}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === activeIndex ? "bg-black scale-125" : "bg-gray-400"
-              }`}
-              onClick={() => scrollToStep(index)}
-              aria-label={`Go to step ${index + 1}`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );

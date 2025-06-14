@@ -23,6 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Pagination } from "@/components/common/pagination";
 import { FileText, Search, Upload, Loader2 } from "lucide-react";
 import type { Job, Resume } from "@/lib/types";
+import { MinimalNav } from "@/components/home/minimal-nav";
 
 export default function JobSuggestionsPage() {
   const router = useRouter();
@@ -137,6 +138,7 @@ export default function JobSuggestionsPage() {
   // Giao diện chính
   return (
     <div className="flex flex-col h-screen max-h-screen overflow-hidden">
+      <MinimalNav />
       <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center shrink-0">
         <h1 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
           {t("dashboard.jobSuggestions") || "Job Suggestions"}
@@ -149,11 +151,11 @@ export default function JobSuggestionsPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar trái: Danh sách CV */}
-        <aside className="w-64 bg-gray-50 dark:bg-gray-800 p-4 border-r dark:border-gray-700 overflow-y-auto flex flex-col">
+        <aside className="w-1/3 bg-gray-50 dark:bg-gray-800 p-4 border-r dark:border-gray-700 overflow-y-auto flex flex-col">
           <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-3">
             {t("resume.yourResumes")}
           </h2>
-          <ScrollArea className="flex-grow pr-2">
+            <div className="flex-grow overflow-y-auto pr-1">
             <div className="space-y-2">
               {allResumes.map((cv) => (
                 <CVCard
@@ -161,12 +163,11 @@ export default function JobSuggestionsPage() {
                   cv={cv}
                   isSelected={selectedResumeForSuggestion?.id === cv.id}
                   onSelect={() => handleSelectResume(cv)}
-                  isFavorite={cv.isFavorite}
                   onToggleFavorite={() => handleToggleResumeFavorite(cv.id)}
                 />
               ))}
             </div>
-          </ScrollArea>
+          </div>
           <Button className="w-full mt-4" onClick={() => router.push("/")}>
             <Upload className="mr-2 h-4 w-4" />
             {t("common.uploadResume")}

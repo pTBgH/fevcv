@@ -234,84 +234,82 @@ export default function ResumeEditorPage() {
 
   return (
     <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-brand-background">
-      <MinimalNav />
+  <MinimalNav />
+  
+  <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
+    {/* ... JSX của Dialog ... */}
+  </Dialog>
+
+  <div className="flex flex-1 overflow-hidden">
+    <aside className="w-1/4 min-w-[300px] p-4 border-r dark:border-gray-700 overflow-y-auto flex flex-col">
+      <h2 className="text-lg font-semibold text-black mb-3">Your Resumes</h2>
       
-      <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
-        {/* ... JSX của Dialog ... */}
-      </Dialog>
-
-      <div className="flex items-center justify-between gap-2 p-4 border-b dark:border-gray-700 bg-white">
-        <h1 className="text-xl font-semibold truncate">{selectedResume?.title || "Resumes"}</h1>
-        <div className="flex items-center gap-2">
-          {isEditing ? (
-            <>
-              <Button variant="outline" onClick={handleDiscardChanges}>{t("common.cancel")}</Button>
-              <Button onClick={handleSaveChanges}>{t("common.save")}</Button>
-            </>
-          ) : (
-            selectedResume && (
-              <>
-                <Button onClick={handleEditToggle}>{t("common.edit")}</Button>
-                <Button variant="secondary" onClick={handleSuggest} disabled={isSuggesting}>
-                  {isSuggesting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isSuggesting ? t("common.searching") : t("job.suggestJobs")}
-                </Button>
-              </>
-            )
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="w-1/4 min-w-[300px] p-4 border-r dark:border-gray-700 overflow-y-auto flex flex-col">
-          <h2 className="text-lg font-semibold text-black mb-3">{t("resume.yourResumes")}</h2>
-          <ScrollArea className="flex-grow pr-3">
-            <div className="space-y-2">
-              {allResumes.map((cv) => (
-                <CVCard
-                  key={cv.id}
-                  cv={cv}
-                  isSelected={selectedResume?.id === cv.id}
-                  onSelect={() => handleSelectResume(cv.id)}
-                  onToggleFavorite={() => handleToggleFavorite(cv.id)}
-                />
-              ))}
-            </div>
-          </ScrollArea>
-          <div className="mt-4 pt-4 border-t dark:border-gray-700 space-y-2">
-             <Button className="w-full" onClick={handleUploadNew}>
-                <Upload className="mr-2 h-4 w-4" />
-                {t("common.uploadResume")}
-            </Button>
-            {/* Logic tạo CV mới có thể không cần thiết ở đây nữa */}
-          </div>
-        </aside>
-        
-        <main className="flex-1 p-6 overflow-y-auto bg-gray-50 dark:bg-gray-900">
-          {selectedResume ? (
-            <ExtractedZone
-              customData={editedData}
-              isEditing={isEditing}
-              onDataChange={handleDataChange}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              {t("resume.selectAResumeToViewOrEdit")}
-            </div>
-          )}
-        </main>
-        
-        <aside className="w-1/3 bg-white p-4 border-l dark:border-gray-700 overflow-hidden hidden lg:block">
-          <h2 className="text-lg font-semibold mb-4 text-black">{t("resume.yourUploadedFile")}</h2>
-          {selectedResume ? (
-            <div className="h-[calc(100vh-120px)] relative rounded-lg border dark:border-gray-700 overflow-hidden">
-              <FileRenderer fileUrl={selectedResume.fileUrl} title={selectedResume.title} />
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">{t("resume.noCvSelected")}</div>
-          )}
-        </aside>
+    <div className="flex-grow overflow-y-auto pr-1">
+      <div className="space-y-2">
+        {allResumes.map((cv) => (
+          <CVCard
+            key={cv.id}
+            cv={cv}
+            isSelected={selectedResume?.id === cv.id}
+            onSelect={() => handleSelectResume(cv.id)}
+            onToggleFavorite={() => handleToggleFavorite(cv.id)}
+          />
+        ))}
       </div>
     </div>
+      <div className="mt-4 pt-4 border-t dark:border-gray-700 space-y-2">
+        <Button className="w-full" onClick={handleSuggest}>
+          suggest
+        </Button>
+        <Button className="w-full" onClick={handleUploadNew}>
+          <Upload className="mr-2 h-4 w-4" />
+          upload
+        </Button>
+      </div>
+    </aside>
+
+    <main className="flex-1 p-4 overflow-y-auto bg-brand-background dark:bg-gray-900 relative">
+      <h2 className="text-xl font-bold mb-4 text-gray-800">Resume Detail</h2>
+      <div className="mt-4 flex gap-2">
+        {isEditing ? (
+          <>
+            <Button variant="outline" onClick={handleDiscardChanges}>{t("common.cancel")}</Button>
+            <Button onClick={handleSaveChanges}>{t("common.save")}</Button>
+          </>
+        ) : (
+          <Button onClick={handleEditToggle}>{t("common.edit")}</Button>
+        )}
+      </div>
+      {selectedResume ? (
+        <>
+          <ExtractedZone
+            customData={editedData}
+            isEditing={isEditing}
+            onDataChange={handleDataChange}
+          />
+    
+        </>
+      ) : (
+        <div className="flex items-center justify-center h-full text-gray-500">
+          {t("resume.selectAResumeToViewOrEdit")}
+        </div>
+      )}
+    </main>
+    <aside className="w-1/3 bg-brand-background p-4 border-l dark:border-gray-700 overflow-hidden hidden lg:block">
+      <h2 className="text-lg font-semibold mb-4 text-black">Your uploaded file</h2>
+      {selectedResume ? (
+        <div className="h-[calc(100vh-120px)] relative rounded-lg border dark:border-gray-700 overflow-hidden">
+          <div className="p-4">
+            <img src={selectedResume.profileImage} alt="Profile" className="w-16 h-16 rounded-full mb-2" />
+            <h3 className="text-md font-semibold">Nguyễn Trò Quyền My</h3>
+            <p className="text-sm text-gray-600">Bình Thạnh, Hồ Chí Minh</p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-full text-gray-500">{t("resume.noCvSelected")}</div>
+      )}
+    </aside>
+  </div>
+</div>
   );
 }

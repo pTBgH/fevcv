@@ -63,7 +63,7 @@ export function ExtractedZone({
         Trong tương lai, bạn cũng nên quản lý các trường này bằng state 
         giống như các trường trong "Resume Detail".
       */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+      {/* <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
         <h2 className="text-xl font-bold mb-4 text-gray-800">Personal Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
           <InfoField label="Name" value="Phùng Thái Bảo" />
@@ -73,12 +73,11 @@ export function ExtractedZone({
           <InfoField label="Email" value="baophungthai8@gmail.com" />
           <InfoField label="Connected Link" value="linkedin.com/in/nguyenvana" />
         </div>
-      </div>
+      </div> */}
 
       {/* Phần chi tiết CV có thể chỉnh sửa */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-gray-800">Resume Detail</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="bg-brand-cream rounded-xl p-6 shadow-sm">
+        <div className="space-y-4">
           <EditableField
             title="Degree"
             content={customData.degree}
@@ -122,20 +121,20 @@ function EditableField({
   onContentChange: (value: string) => void;
 }) {
   return (
-    <div className="flex flex-col">
-      <h3 className="text-lg font-semibold mb-2 text-gray-700">{title}</h3>
-      {isEditing ? (
-        <textarea
-          className="w-full h-40 p-3 border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-          value={content}
-          onChange={(e) => onContentChange(e.target.value)}
-        />
-      ) : (
-        <div className="text-gray-800 whitespace-pre-wrap min-h-[40px] p-3 bg-gray-50 rounded-md border">
-          {content || "—"}
-        </div>
-      )}
+<div className="flex flex-col">
+  <h3 className="text-lg font-semibold mb-2 text-black">{title}</h3>
+  {isEditing ? (
+    <textarea
+      className="w-full h-40 p-3 rounded-md bg-brand-background text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-y"
+      value={content}
+      onChange={(e) => onContentChange(e.target.value)}
+    />
+  ) : (
+    <div className="text-gray-700 whitespace-pre-wrap min-h-[40px] p-3 bg-brand-background rounded-md border border-gray-200">
+      {content || "—"}
     </div>
+  )}
+</div>
   );
 }
 

@@ -5,7 +5,7 @@ import type { Resume } from "@/lib/types"
 import { useAppDispatch } from "@/lib/redux/hooks"
 import { toggleFavorite } from "@/lib/redux/slices/resumeSlice"
 import ExternalSquareArrow from '@/components/icons/SquareArrowOutSharp';
-
+import { cn } from "@/lib/utils"
 interface CVCardProps {
   cv: Resume
   isSelected: boolean
@@ -49,9 +49,19 @@ export const CVCard = forwardRef<HTMLDivElement, CVCardProps>(
     return (
       <div
         ref={ref}
-        className="relative border rounded-lg cursor-pointer transition-colors p-3 group bg-brand-background text-black border border-black hover:bg-gray-100"
+        className={cn(
+            // Các class chung luôn được áp dụng
+            "w-full relative border rounded-lg cursor-pointer transition-colors p-3 group", 
+            // Các class áp dụng theo điều kiện
+            {
+                // Áp dụng khi isSelected = true
+                "bg-black text-white border-black": isSelected,
+                // Áp dụng khi isSelected = false
+                "bg-brand-background text-black border-black hover:bg-brand-cream": !isSelected, 
+            }
+        )}
         onClick={onSelect}
-      >
+    >
         {/* External link icon ở góc trên bên phải */}
       <button
         className="absolute -top-1 -right-1 "

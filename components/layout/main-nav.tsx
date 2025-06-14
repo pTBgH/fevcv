@@ -8,13 +8,16 @@ import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LanguageSwitcher } from "@/components/common/language-switcher"
 import { useLanguage } from "@/lib/i18n/context"
-import { ProfileDropdownMenu } from "./profile-dropdown-menu"
+import ProfileDropdownMenu from "./profile-dropdown-menu"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { ExpandedMenu } from "./expanded-menu"
+import { useSession, signIn, signOut } from "next-auth/react"
 
-// Use Redux hooks for auth state
-import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
-import { logoutUser } from "@/lib/redux/slices/authSlice"
+interface ProfileDropdownMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onLogout: () => void;
+}
 
 export function MainNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -25,26 +28,21 @@ export function MainNav() {
   const pathname = usePathname()
   const { t } = useLanguage()
 
-  // Get auth state from Redux
-  const { token, isAuthenticated } = useAppSelector((state) => state.auth)
-  const dispatch = useAppDispatch()
+  // Using Next‑Auth session for auth state instead of Redux
+  const { data: session, status } = useSession()
 
   const handleDashboardClick = () => {
     router.push("/dashboard")
   }
 
   const handleLogin = () => {
-    router.push(`/auth?redirect=${encodeURIComponent(pathname)}`)
+    // Trigger Next‑Auth login flow (Keycloak)
+    signIn("keycloak")
   }
 
   const handleLogout = () => {
-    dispatch(logoutUser())
-      .unwrap()
-      .then(() => {
-        setProfileMenuOpen(false)
-        router.push("/")
-      })
-      .catch((error) => console.error("Logout failed:", error))
+    signOut({ callbackUrl: "/" })
+    setProfileMenuOpen(false)
   }
 
   const toggleMobileMenu = () => {
@@ -83,7 +81,7 @@ export function MainNav() {
               <Button variant="ghost" onClick={() => router.push("/upload")}>
                 {t("common.uploadResume")}
               </Button>
-              {isAuthenticated ? (
+              {status === "authenticated" ? (
                 <>
                   <Button
                     className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
@@ -105,8 +103,6 @@ export function MainNav() {
                       />
                     </button>
                     <ProfileDropdownMenu
-                      isOpen={profileMenuOpen}
-                      onClose={() => setProfileMenuOpen(false)}
                       onLogout={handleLogout}
                     />
                   </div>
@@ -152,7 +148,7 @@ export function MainNav() {
       </header>
 
       {/* Mobile Menu - only show when not authenticated */}
-      {!isAuthenticated && mobileMenuOpen && (
+      {status !== "authenticated" && mobileMenuOpen && (
         <div className="md:hidden absolute top-16 right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 border dark:border-gray-700 z-[9999]">
           <div className="flex flex-col">
             <Link

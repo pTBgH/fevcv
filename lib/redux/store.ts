@@ -4,9 +4,9 @@ import resumeReducer from "./slices/resumeSlice"
 import uiReducer from "./slices/uiSlice"
 import searchReducer from "./slices/searchSlice"
 import notificationReducer from "./slices/notificationSlice"
-import authReducer from "./slices/authSlice"
-import toastReducer from "./slices/toastSlice"
+// import toastReducer from "./slices/toastSlice"
 import configReducer from "./slices/configSlice"
+import suggestionReducer from "./slices/suggestionSlice"
 
 export const store = configureStore({
   reducer: {
@@ -15,9 +15,9 @@ export const store = configureStore({
     ui: uiReducer,
     search: searchReducer,
     notifications: notificationReducer,
-    auth: authReducer,
-    toast: toastReducer,
+    // toast: toastReducer,
     config: configReducer,
+    suggestions: suggestionReducer,
   },
   // Enable Redux DevTools
   devTools: process.env.NODE_ENV !== "production",

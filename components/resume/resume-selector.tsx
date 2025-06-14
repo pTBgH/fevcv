@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect, useRef } from "react"
 import { Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -10,8 +9,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { useLanguage } from "@/lib/i18n/context"
 import { getActiveResumes, toggleFavorite } from "@/lib/cv-service"
 import type { Resume } from "@/lib/types"
-import { useAuth } from "@/hooks/use-auth"
-import { LoginPrompt } from "@/components/auth/login-prompt"
+import { useSession, signIn } from "next-auth/react"
 
 interface ResumeSelectorProps {
   mode?: "search" | "suggest"
@@ -28,30 +26,24 @@ export function ResumeSelector({
 }: ResumeSelectorProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const { data: session } = useSession()
   const [mode, setMode] = useState(initialMode)
   const [showDropdown, setShowDropdown] = useState(false)
   const [resumes, setResumes] = useState<Resume[]>([])
   const [favorites, setFavorites] = useState<Record<string, boolean>>({})
   const [currentDate, setCurrentDate] = useState(selectedDate)
   const [selectedResume, setSelectedResume] = useState<Resume | null>(null)
-  const [loginPromptOpen, setLoginPromptOpen] = useState(false)
   const { t } = useLanguage()
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const { isAuthenticated } = useAuth()
 
   useEffect(() => {
-    // Get active resumes
     const activeResumes = getActiveResumes()
     setResumes(activeResumes)
-
-    // Initialize favorite states
     const favoritesMap: Record<string, boolean> = {}
     activeResumes.forEach((resume) => {
       favoritesMap[resume.id] = resume.isFavorite
     })
     setFavorites(favoritesMap)
-
-    // Set selected resume if ID is provided
     if (selectedId) {
       const selected = activeResumes.find((r) => r.id === selectedId)
       if (selected) {
@@ -67,7 +59,6 @@ export function ResumeSelector({
     }
   }, [selectedId, selectedDate])
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -82,68 +73,50 @@ export function ResumeSelector({
 
   const handleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
-
-    if (!isAuthenticated) {
+    if (!session) {
       e.preventDefault()
-      setLoginPromptOpen(true)
+      signIn("keycloak")
       return
     }
-
-    // Update favorite state in UI
     setFavorites((prev) => ({
       ...prev,
       [id]: !prev[id],
     }))
-
-    // In a real app, you would call an API to update the state
     const updatedResume = toggleFavorite(id)
     if (updatedResume) {
-      setResumes((prevResumes) => prevResumes.map((resume) => (resume.id === id ? updatedResume : resume)))
+      setResumes((prevResumes) =>
+        prevResumes.map((resume) => (resume.id === id ? updatedResume : resume)),
+      )
     }
   }
 
   const handleToggleDropdown = () => {
-    if (!isAuthenticated) {
-      setLoginPromptOpen(true)
+    if (!session) {
+      signIn("keycloak")
       return
     }
-
     setShowDropdown(!showDropdown)
   }
 
   const handleSelectCV = (resume: Resume) => {
-    if (!isAuthenticated) {
-      setLoginPromptOpen(true)
+    if (!session) {
+      signIn("keycloak")
       return
     }
-
     setSelectedResume(resume)
     onSelect?.(resume.id)
     setMode("suggest")
     setCurrentDate(resume.title)
     setShowDropdown(false)
-
-    // Navigate to suggest mode
     router.push(`/search?mode=suggest&cvId=${resume.id}&cvDate=${encodeURIComponent(resume.title)}`)
   }
 
   const handleUploadNew = () => {
-    if (!isAuthenticated) {
-      const returnUrl = encodeURIComponent(pathname)
-      router.push(`/auth?redirect=${returnUrl}`)
+    if (!session) {
+      signIn("keycloak")
       return
     }
-
     router.push("/upload")
-  }
-
-  const closeLoginPrompt = () => {
-    setLoginPromptOpen(false)
-  }
-
-  const handleLoginRedirect = () => {
-    const returnUrl = encodeURIComponent(pathname)
-    router.push(`/auth?redirect=${returnUrl}`)
   }
 
   return (
@@ -152,7 +125,6 @@ export function ResumeSelector({
         <div className="text-gray-700 dark:text-gray-200 font-medium whitespace-nowrap">
           {t("common.optimizeForResume")}:
         </div>
-
         {selectedResume ? (
           <button
             onClick={handleToggleDropdown}
@@ -169,12 +141,10 @@ export function ResumeSelector({
           </button>
         )}
       </div>
-
       {showDropdown && (
         <div className="absolute z-50 mt-1 w-full max-w-md bg-white dark:bg-gray-800 rounded-md shadow-lg overflow-hidden">
           {resumes.length > 0 && (
             <div className="max-h-80 overflow-y-auto">
-              {/* Selected resume highlighted at top */}
               {selectedResume && (
                 <div
                   className="flex items-center justify-between p-3 bg-black text-white cursor-pointer"
@@ -184,14 +154,14 @@ export function ResumeSelector({
                   <Heart
                     className={cn(
                       "h-5 w-5 cursor-pointer",
-                      favorites[selectedResume.id] ? "fill-red-500 text-red-500" : "text-gray-300",
+                      favorites[selectedResume.id]
+                        ? "fill-red-500 text-red-500"
+                        : "text-gray-300",
                     )}
                     onClick={(e) => handleFavorite(selectedResume.id, e)}
                   />
                 </div>
               )}
-
-              {/* List of all resumes */}
               {resumes.map((resume) => (
                 <div
                   key={resume.id}
@@ -205,7 +175,9 @@ export function ResumeSelector({
                   <Heart
                     className={cn(
                       "h-5 w-5 cursor-pointer",
-                      favorites[resume.id] ? "fill-red-500 text-red-500" : "text-gray-300",
+                      favorites[resume.id]
+                        ? "fill-red-500 text-red-500"
+                        : "text-gray-300",
                     )}
                     onClick={(e) => handleFavorite(resume.id, e)}
                   />
@@ -213,8 +185,6 @@ export function ResumeSelector({
               ))}
             </div>
           )}
-
-          {/* Upload new CV link */}
           <div className="p-3 text-center border-t border-gray-200 dark:border-gray-700">
             <Link
               href="#"
@@ -229,9 +199,6 @@ export function ResumeSelector({
           </div>
         </div>
       )}
-
-      {/* Login Prompt */}
-      <LoginPrompt isOpen={loginPromptOpen} onClose={closeLoginPrompt} featureName={t("resume.optimizeSearch")} />
     </div>
   )
 }

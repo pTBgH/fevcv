@@ -1,7 +1,6 @@
 "use client"
 
-import type React from "react"
-
+import { signOut } from "next-auth/react"
 import { Heart, Trash2, LogOut, Settings, Bell, Bookmark, History, User, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -9,7 +8,7 @@ import { useLanguage } from "@/lib/i18n/context"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAppDispatch } from "@/lib/redux/hooks"
-import { logoutUser } from "@/lib/redux/slices/authSlice"
+// import { logError } from "@/lib/logger" // New logging function import
 
 type MenuItemType = "default" | "red" | "yellow"
 
@@ -66,68 +65,11 @@ function DropdownItem({
   return null
 }
 
-// Thêm export named để tương thích với các import hiện tại
-export function ProfileDropdownMenu({
-  isOpen,
-  onClose,
-  onLogout,
-}: { isOpen: boolean; onClose: () => void; onLogout: () => void }) {
-  const { t } = useLanguage()
-  const router = useRouter()
-  const dispatch = useAppDispatch()
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        onClose()
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [onClose])
-
-  if (!isOpen) return null
-
-  return (
-    <div
-      className={cn(
-        "absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-200 dark:divide-gray-700",
-        "rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5",
-        "overflow-hidden",
-      )}
-      ref={dropdownRef}
-    >
-      <div className="px-4 py-3">
-        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">John Doe</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">john.doe@example.com</p>
-      </div>
-
-      <div className="py-1">
-        <DropdownItem href="/dashboard/settings" label={t("common.settings")} icon={Settings} />
-        <DropdownItem href="/dashboard/notifications" label={t("common.notifications")} icon={Bell} />
-      </div>
-
-      <div className="py-1">
-        <DropdownItem href="/dashboard/favorite-jobs" label={t("common.favoriteJobs")} icon={Heart} type="red" />
-        <DropdownItem href="/dashboard/archived-jobs" label={t("common.archivedJobs")} icon={Bookmark} type="yellow" />
-        <DropdownItem href="/dashboard/bin" label={t("common.bin")} icon={Trash2} />
-      </div>
-
-      <div className="py-1">
-        <DropdownItem href="/dashboard/history" label={t("common.history")} icon={History} />
-      </div>
-
-      <div className="py-1">
-        <DropdownItem label={t("auth.logout")} icon={LogOut} onClick={onLogout} type="red" />
-      </div>
-    </div>
-  )
+interface ProfileDropdownMenuProps {
+  onLogout?: () => void
 }
 
-// Giữ lại default export cho các import hiện tại
-export default function StandaloneProfileDropdownMenu() {
+export default function ProfileDropdownMenu({ onLogout }: ProfileDropdownMenuProps) {
   const { t } = useLanguage()
   const router = useRouter()
   const dispatch = useAppDispatch()
@@ -145,14 +87,21 @@ export default function StandaloneProfileDropdownMenu() {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const handleLogout = () => {
-    dispatch(logoutUser())
-      .unwrap()
-      .then(() => {
-        router.push("/")
-      })
-      .catch((error) => console.error("Logout failed:", error))
-  }
+  // const handleLogoutClick = () => {
+  //   if (onLogout) {
+  //     onLogout()
+  //   } else {
+  //     dispatch(logoutUser())
+  //       .unwrap()
+  //       .then(() => {
+  //         router.push("/")
+  //       })
+  //       .catch((error) => {
+  //         logError("Logout failed", error)
+  //         // Optionally add further error handling logic here.
+  //       })
+  //   }
+  // }
 
   const trigger = (
     <button
@@ -213,7 +162,7 @@ export default function StandaloneProfileDropdownMenu() {
           </div>
 
           <div className="py-1">
-            <DropdownItem label={t("auth.logout")} icon={LogOut} onClick={handleLogout} type="red" />
+            <DropdownItem label={t("auth.logout")} icon={LogOut} type="red" />
           </div>
         </div>
       )}

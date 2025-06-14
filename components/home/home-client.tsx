@@ -5,12 +5,14 @@ import { QuickGuideSection } from "./quick-guide-section"
 import { OurServicesSection } from "./our-services-section"
 import { MinimalNav } from "./minimal-nav"
 import { MinimalFooter } from "./minimal-footer"
+// import ProfilePage  from "@/app/profiles/page"
 
 export function HomeClient() {
   return (
     <div className="min-h-screen flex flex-col">
       <MinimalNav />
-
+      {/* <ProfilePage /> */}
+      {/* Main content area */}
       <main className="flex-grow">
         {/* Hero Section with CV Upload */}
         <section className="bg-brand-background">

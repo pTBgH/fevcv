@@ -66,7 +66,7 @@ export function JobCardDetails({
   return (
     <>
       {/* Top section */}
-      <div className="bg-brand-cream p-5 text-black rounded-t-xl">
+      <div className="bg-brand-cream pt-2 pl-5 pb-4 pr-4 text-black rounded-t-xl">
         <div className="flex items-center mb-4">
           <div className="w-12 h-12 bg-white flex items-center justify-center rounded-lg mr-3 overflow-hidden flex-shrink-0">
             {company.logo ? (
@@ -81,11 +81,8 @@ export function JobCardDetails({
               </span>
             )}
           </div>
-          <div className="overflow-hidden">
-            <div className="font-semibold text-lg truncate">{company.name}</div>
-            <div className="text-sm text-gray-400 truncate">
-              {category || "Uncategorized"}
-            </div>
+          <div className="overflow-hidden pr-28">
+            <div className="font-semibold text-lg leading-tight line-clamp-2 min-h-[56px]">{company.name}</div>
           </div>
         </div>
 
@@ -94,7 +91,7 @@ export function JobCardDetails({
         </h3>
 
         {/* Render các tag từ mảng dữ liệu đã tạo */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-nowrap gap-2 [mask-image:linear-gradient(to_right,black_90%,transparent)]">
           {displayTags.map((tag) => (
             <JobAttributeTag key={tag.id} icon={tag.icon}>
               {tag.text}

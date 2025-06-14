@@ -127,8 +127,8 @@ export const en = {
     changeCv: "Change CV",
     jobSuggestionFor: "Job suggestions for",
     degree: "Degree",
-    technicalSkills: "Technical Skills",
-    softSkills: "Soft Skills",
+    technical_skill: "Technical Skills",
+    soft_skill: "Soft Skills",
     experience: "Experience",
     dragFileOrClickToUpload: "Drag file or click here to upload",
     supportForPdfDocDocx: "Support for PDF, DOC, DOCX",
@@ -252,7 +252,6 @@ export const en = {
     unarchive: "Unarchived {{entity}}",
     hide: "Hidden {{entity}}",
     delete: "Deleted {{entity}}",
-    restore: "Restored {{entity}}",
   },
 
   // Dialog

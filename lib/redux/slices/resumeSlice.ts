@@ -1,158 +1,210 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
-import type { RootState } from "../store"
+import { createSlice, createSelector, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
+import type { RootState } from "../store";
 import {
-  getActiveResumes as getResumes,
+  getResumes as getResumesService,
   updateResume as updateResumeService,
   deleteResume as deleteResumeService,
-} from "@/lib/cv-service"
-import type { WritableDraft } from "immer"
-import type { Resume } from "@/lib/types"
+  restoreResume as restoreResumeService,
+  toggleFavoriteApi as toggleFavoriteService,
+} from "@/lib/cv-service";
+import type { WritableDraft } from "immer";
+import type { Resume } from "@/lib/types";
+import { getSession } from "next-auth/react";
 
-// Define the initial state
+
+// --- STATE INTERFACE VÀ INITIALSTATE GIỮ NGUYÊN ---
 interface ResumeState {
-  resumes: Resume[]
-  selectedResumeId: string | null
-  favoriteResumes: Record<string, boolean>
-  loading: boolean
-  error: string | null
+  items: Resume[];
+  selectedId: string | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: ResumeState = {
-  resumes: [],
-  selectedResumeId: null,
-  favoriteResumes: {},
+  items: [],
+  selectedId: null,
   loading: false,
   error: null,
-}
+};
 
-// Create async thunk for fetching resumes
-export const fetchResumes = createAsyncThunk("resumes/fetchResumes", async (_, { rejectWithValue }) => {
-  try {
-    const resumes = getResumes()
-    return resumes
-  } catch (error) {
-    return rejectWithValue("Failed to fetch resumes")
+
+// === SỬA LẠI TOÀN BỘ ASYNC THUNKS ===
+
+// Helper function để lấy token, tránh lặp code
+const getAccessToken = async (rejectWithValue: (value: string) => any) => {
+  const session = await getSession();
+  if (!session?.accessToken) {
+    return rejectWithValue('User not authenticated or session expired.');
   }
-})
+  return session.accessToken;
+};
 
-// Create async thunk for updating a resume
-export const updateResume = createAsyncThunk(
-  "resumes/updateResume",
-  async ({ id, data }: { id: string; data: Partial<Resume> }, { rejectWithValue }) => {
+export const fetchResumes = createAsyncThunk<Resume[], void, { rejectValue: string }>(
+  "resumes/fetchResumes",
+  async (_, { rejectWithValue }) => {
     try {
-      const updatedResume = updateResumeService(id, data || {})
-      return updatedResume
+      const accessToken = await getAccessToken(rejectWithValue);
+      if (typeof accessToken !== 'string') return accessToken; // Trả về lỗi nếu không có token
+      
+      const resumes = await getResumesService(accessToken);
+      return resumes;
     } catch (error) {
-      return rejectWithValue(`Failed to update resume ${id}`)
+      return rejectWithValue(error instanceof Error ? error.message : "Failed to fetch resumes");
     }
-  },
-)
-
-// Create async thunk for deleting a resume
-export const deleteResume = createAsyncThunk("resumes/deleteResume", async (id: string, { rejectWithValue }) => {
-  try {
-    await deleteResumeService(id)
-    return id
-  } catch (error) {
-    return rejectWithValue(`Failed to delete resume ${id}`)
   }
-})
+);
 
-// Create async thunk for restoring a resume
-export const restoreResume = createAsyncThunk("resumes/restoreResume", async (id: string, { rejectWithValue }) => {
-  try {
-    // Assuming restoreResumeService is defined elsewhere and handles the actual restore logic
-    // const restoredResume = restoreResumeService(id); // Replace with your actual restore function
-    // return restoredResume;
-    return id // Returning id for now, replace with actual restored resume object
-  } catch (error) {
-    return rejectWithValue(`Failed to restore resume ${id}`)
+export const updateResume = createAsyncThunk<Resume, { id: string; data: Partial<Resume> }, { rejectValue: string }>(
+  "resumes/updateResume",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const accessToken = await getAccessToken(rejectWithValue);
+      if (typeof accessToken !== 'string') return accessToken;
+
+      const updatedResume = await updateResumeService(id, data, accessToken);
+      if (!updatedResume) throw new Error("Update failed, no resume returned.");
+      return updatedResume;
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : `Failed to update resume ${id}`);
+    }
   }
-})
+);
 
-// Create the slice
+export const deleteResume = createAsyncThunk<string, string, { rejectValue: string }>(
+  "resumes/deleteResume",
+  async (id, { rejectWithValue }) => {
+    try {
+      const accessToken = await getAccessToken(rejectWithValue);
+      if (typeof accessToken !== 'string') return accessToken;
+
+      await deleteResumeService(id, accessToken);
+      return id; // Trả về ID để reducer biết cần cập nhật CV nào
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : `Failed to delete resume ${id}`);
+    }
+  }
+);
+
+export const restoreResume = createAsyncThunk<Resume, string, { rejectValue: string }>(
+  "resumes/restoreResume",
+  async (id, { rejectWithValue }) => {
+    try {
+      const accessToken = await getAccessToken(rejectWithValue);
+      if (typeof accessToken !== 'string') return accessToken;
+
+      const restoredResume = await restoreResumeService(id, accessToken);
+      if (!restoredResume) throw new Error("Restore failed, no resume returned.");
+      return restoredResume;
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : `Failed to restore resume ${id}`);
+    }
+  }
+);
+
+// Thunk mới cho việc toggle favorite, thay thế reducer cũ
+export const toggleFavorite = createAsyncThunk<Resume, string, { rejectValue: string }>(
+    "resumes/toggleFavorite",
+    async (id, { rejectWithValue }) => {
+        try {
+            const accessToken = await getAccessToken(rejectWithValue);
+            if (typeof accessToken !== 'string') return accessToken;
+
+            const updatedResume = await toggleFavoriteService(id, accessToken);
+            if (!updatedResume) throw new Error("Toggle favorite failed.");
+            return updatedResume;
+        } catch (error) {
+            return rejectWithValue(error instanceof Error ? error.message : `Failed to toggle favorite for ${id}`);
+        }
+    }
+);
+
+
+// --- SỬA LẠI SLICE ---
 const resumeSlice = createSlice({
   name: "resumes",
   initialState,
   reducers: {
-    setSelectedResume: (state, action: PayloadAction<string>) => {
-      state.selectedResumeId = action.payload
-    },
-    toggleFavorite: (state, action: PayloadAction<string>) => {
-      const id = action.payload
-      if (state.favoriteResumes[id]) {
-        const { [id]: _, ...rest } = state.favoriteResumes
-        state.favoriteResumes = rest
-      } else {
-        state.favoriteResumes[id] = true
-      }
+    setSelectedResume: (state, action: PayloadAction<string | null>) => {
+      state.selectedId = action.payload;
     },
     addResume: (state, action: PayloadAction<Resume>) => {
-      state.resumes = [...state.resumes, action.payload]
+      const existingIndex = state.items.findIndex(r => r.id === action.payload.id);
+      if (existingIndex === -1) {
+        state.items.unshift(action.payload);
+      }
     },
   },
   extraReducers: (builder) => {
     builder
+      // *** ĐẶT .addCase LÊN TRÊN .addMatcher ***
+      // Fetch
       .addCase(fetchResumes.pending, (state) => {
-        state.loading = true
-        state.error = null
-      })
-      .addCase(fetchResumes.fulfilled, (state, action) => {
-        state.loading = false
-        state.resumes = action.payload
-        // If no resume is selected, select the first one
-        if (!state.selectedResumeId && action.payload.length > 0) {
-          state.selectedResumeId = action.payload[0].id
-        }
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchResumes.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload as string
+        state.loading = false;
+        state.error = action.payload as string;
       })
-      .addCase(updateResume.fulfilled, (state, action) => {
-        const updatedResume = action.payload
-        state.resumes = state.resumes.map((resume) =>
-          updatedResume && resume.id === updatedResume.id ? updatedResume : resume,
-        ) as WritableDraft<Resume>[]
-      })
-      .addCase(deleteResume.fulfilled, (state, action) => {
-        const deletedId = action.payload
-        state.resumes = state.resumes.filter((resume) => resume.id !== deletedId)
-
-        // If the deleted resume was selected, select another one
-        if (state.selectedResumeId === deletedId) {
-          state.selectedResumeId = state.resumes.length > 0 ? state.resumes[0].id : null
+      .addCase(fetchResumes.fulfilled, (state, action: PayloadAction<Resume[]>) => {
+        state.loading = false;
+        state.items = action.payload;
+        if (!state.selectedId && action.payload.length > 0) {
+          state.selectedId = action.payload[0].id;
         }
-
-        // Remove from favorites if it was favorited
-        if (state.favoriteResumes[deletedId]) {
-          const { [deletedId]: _, ...rest } = state.favoriteResumes
-          state.favoriteResumes = rest
+      })      
+      // Delete
+      .addCase(deleteResume.fulfilled, (state, action: PayloadAction<string>) => {
+        const deletedId = action.payload;
+        const resume = state.items.find(r => r.id === deletedId);
+        if (resume) {
+          resume.deletedAt = new Date().toISOString();
         }
       })
-      .addCase(restoreResume.fulfilled, (state, action) => {
-        const restoredId = action.payload
-        state.resumes = state.resumes.map((resume) =>
-          resume.id === restoredId ? { ...resume, deletedAt: null } : resume,
-        ) as WritableDraft<Resume>[]
-      })
+      // *** .addMatcher ĐẶT Ở DƯỚI ***
+      // Xử lý chung cho Update, Restore, Toggle Favorite
+      .addMatcher(
+        (action): action is PayloadAction<Resume> => 
+          [updateResume.fulfilled.type, restoreResume.fulfilled.type, toggleFavorite.fulfilled.type].includes(action.type),
+        (state, action) => {
+            const updatedResume = action.payload;
+            const index = state.items.findIndex((r: Resume) => r.id === updatedResume.id); // Thêm kiểu cho r
+            if (index !== -1) {
+                state.items[index] = updatedResume as WritableDraft<Resume>;
+            }
+        }
+      );
   },
-})
+});
 
-// Export actions
-export const { setSelectedResume, toggleFavorite, addResume } = resumeSlice.actions
+// --- ACTIONS VÀ SELECTORS (CẬP NHẬT) ---
 
-// Export selectors
-export const selectAllResumes = (state: RootState) => state.resumes.resumes
-export const selectActiveResumes = (state: RootState) => state.resumes.resumes.filter((resume) => !resume.deletedAt)
-export const selectDeletedResumes = (state: RootState) => state.resumes.resumes.filter((resume) => resume.deletedAt)
-export const selectSelectedResumeId = (state: RootState) => state.resumes.selectedResumeId
-export const selectResumeById = (state: RootState, id: string) =>
-  state.resumes.resumes.find((resume) => resume.id === id)
-export const selectIsFavoriteResume = (state: RootState, id: string) => !!state.resumes.favoriteResumes[id]
-export const selectFavoriteResumes = (state: RootState) =>
-  state.resumes.resumes.filter((resume) => state.resumes.favoriteResumes[resume.id])
-export const selectResumesLoading = (state: RootState) => state.resumes.loading
-export const selectResumesError = (state: RootState) => state.resumes.error
+export const { setSelectedResume, addResume } = resumeSlice.actions;
 
-export default resumeSlice.reducer
+const selectAllItems = (state: RootState) => state.resumes.items;
+
+export const selectActiveResumes = createSelector(
+  [selectAllItems],
+  (items) => items.filter((resume: Resume) => !resume.deletedAt) // Thêm kiểu cho resume
+);
+
+export const selectDeletedResumes = createSelector(
+  [selectAllItems],
+  (items) => items.filter((resume: Resume) => !!resume.deletedAt) // Thêm kiểu cho resume
+);
+
+export const selectFavoriteResumes = createSelector(
+  [selectActiveResumes],
+  (activeResumes) => activeResumes.filter((resume: Resume) => resume.isFavorite) // Thêm kiểu cho resume
+);
+
+export const selectSelectedResumeId = (state: RootState) => state.resumes.selectedId;
+export const selectResumesLoading = (state: RootState) => state.resumes.loading;
+export const selectResumesError = (state: RootState) => state.resumes.error;
+
+export const selectSelectedResume = createSelector(
+  [selectAllItems, selectSelectedResumeId],
+  (items, selectedId) => items.find((r: Resume) => r.id === selectedId) || null // Thêm kiểu cho r
+);
+
+export default resumeSlice.reducer;

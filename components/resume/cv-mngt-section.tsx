@@ -7,7 +7,7 @@ import CVHeader from "@/components/resume/cv-header"
 import ExtractedZone from "@/components/resume/extracted-zone"
 import { useLanguage } from "@/lib/i18n/context"
 // Replace toast with addToast from useToast
-import { useToast } from "@/hooks/use-toast"
+// import { useToast } from "@/hooks/use-toast"
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks"
 import {
   selectActiveResumes,
@@ -26,7 +26,7 @@ interface CVMngtSectionProps {
 export function CVMngtSection({ onCVSelect, cvId, resume }: CVMngtSectionProps) {
   const { t } = useLanguage()
   // Changed destructuring: use addToast instead of toast
-  const { addToast } = useToast()
+  // const { addToast } = useToast()
   const dispatch = useAppDispatch()
 
   // Get resumes from Redux store
@@ -38,9 +38,10 @@ export function CVMngtSection({ onCVSelect, cvId, resume }: CVMngtSectionProps) 
   const [isEditing, setIsEditing] = useState(false)
   const [editedData, setEditedData] = useState({
     degree: "",
-    technicalSkills: "",
-    softSkills: "",
+    technical_skill: "",
+    soft_skill: "",
     experience: "",
+    file_path: "",
   })
 
   // Initialize edited data when selected resume changes
@@ -92,13 +93,13 @@ export function CVMngtSection({ onCVSelect, cvId, resume }: CVMngtSectionProps) 
 
       // Show toast notification using addToast
       const isFavorite = resumes.find((r) => r.id === id)?.isFavorite
-      addToast({
-        title: isFavorite ? t("resume.removedFromFavorites") : t("resume.addedToFavorites"),
-        type: isFavorite ? "info" : "success",
-        duration: 3000,
-      })
+      // addToast({
+      //   title: isFavorite ? t("resume.removedFromFavorites") : t("resume.addedToFavorites"),
+      //   type: isFavorite ? "info" : "success",
+      //   duration: 3000,
+      // })
     },
-    [dispatch, resumes, addToast, t],
+    [dispatch, resumes, t],
   )
 
   // Select CV handler
@@ -132,13 +133,13 @@ export function CVMngtSection({ onCVSelect, cvId, resume }: CVMngtSectionProps) 
         data: { data: editedData },
       }),
     )
-    addToast({
-      title: t("resume.saveSuccess"),
-      description: t("resume.saveSuccessDescription"),
-      type: "success",
-    })
+    // addToast({
+    //   title: t("resume.saveSuccess"),
+    //   description: t("resume.saveSuccessDescription"),
+    //   type: "success",
+    // })
     setIsEditing(false)
-  }, [selectedCVId, editedData, dispatch, addToast, t])
+  }, [selectedCVId, editedData, dispatch, t])
 
   const handleDataChange = useCallback((field: string, value: string) => {
     setEditedData((prev) => ({
@@ -150,46 +151,47 @@ export function CVMngtSection({ onCVSelect, cvId, resume }: CVMngtSectionProps) 
   // Other handlers with explicit event types
   const handleDelete = useCallback(
     (id: string) => {
-      addToast({
-        title: t("resume.deleteConfirmation"),
-        description: t("resume.deleteConfirmationDescription"),
-        type: "warning",
-        action: {
-          label: t("common.confirm"),
-          onClick: () => {
-            // Delete logic would go here using Redux
-            addToast({
-              title: t("resume.deleted"),
-              type: "success",
-            })
-          },
-        },
-      })
+      // addToast({
+      //   title: t("resume.deleteConfirmation"),
+      //   description: t("resume.deleteConfirmationDescription"),
+      //   type: "warning",
+      //   action: {
+      //     label: t("common.confirm"),
+      //     onClick: () => {
+      //       // Delete logic would go here using Redux
+      //       addToast({
+      //         title: t("resume.deleted"),
+      //         type: "success",
+      //       })
+      //     },
+      //   },
+      // })
     },
-    [addToast, t],
+    [t],
   )
 
   const handleRename = useCallback(
     (id: string) => {
-      addToast({
-        title: t("resume.rename"),
-        description: "Rename functionality would be implemented here",
-        type: "info",
-      })
+      // addToast({
+      //   title: t("resume.rename"),
+      //   description: "Rename functionality would be implemented here",
+      //   type: "info",
+      // })
     },
-    [addToast, t],
+    [t],
   )
 
-  const handleDuplicate = useCallback(
-    (id: string) => {
-      addToast({
-        title: t("resume.duplicated"),
-        description: t("resume.duplicatedDescription"),
-        type: "success",
-      })
-    },
-    [addToast, t],
-  )
+  // const handleDuplicate = useCallback(
+  //   (id: string) => {
+  //     // addToast({
+  //     //   title: t("resume.duplicated"),
+  //     //   description: t("resume.duplicatedDescription"),
+  //     //   type: "success",
+  //     // })
+  //     })
+  //   },
+  //   [t],
+  // )
 
   // Get selected CV
   const selectedCV = resumes.find((cv) => cv.id === selectedCVId)
@@ -226,10 +228,10 @@ export function CVMngtSection({ onCVSelect, cvId, resume }: CVMngtSectionProps) 
                 e.stopPropagation()
                 handleRename(cv.id)
               }}
-              onDuplicateClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-                e.stopPropagation()
-                handleDuplicate(cv.id)
-              }}
+              // onDuplicateClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+              //   e.stopPropagation()
+              //   handleDuplicate(cv.id)
+              // }}
               onDeleteClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
                 e.stopPropagation()
                 handleDelete(cv.id)
@@ -252,3 +254,14 @@ export function CVMngtSection({ onCVSelect, cvId, resume }: CVMngtSectionProps) 
 }
 
 export default CVMngtSection
+
+interface CVCardProps {
+  cv: Resume;
+  isSelected: boolean;
+  onSelect: () => void;
+  onToggleFavorite: (id: string) => void;
+  isFavorite: boolean;
+  onRenameClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  // onDuplicateClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onDeleteClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}

@@ -16,25 +16,24 @@ import {
   selectIsJobHidden,
   setDontAskAgain,
 } from "@/lib/redux/slices/jobActionsSlice"
-import { useAuthCheck } from "@/hooks/use-auth-check"
 import { useLanguage } from "@/lib/i18n/context"
-import { useReduxToast } from "@/hooks/use-redux-toast"
-import { LoginPrompt } from "@/components/auth/login-prompt"
+// import { useReduxToast } from "@/hooks/use-redux-toast"
+import { useSession, signIn } from "next-auth/react"
 
 interface JobCardProps {
   job: Job
   type?: "all" | "favorite" | "archived" | "hidden"
-  onFavorite?: (id: number) => void
-  onArchive?: (id: number) => void
-  onHide?: (id: number) => void
-  onRestore?: (id: number) => void
+  onFavorite?: (id: string) => void
+  onArchive?: (id: string) => void
+  onHide?: (id: string) => void
+  onRestore?: (id: string) => void
 }
 
 export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRestore }: JobCardProps) {
   const dispatch = useAppDispatch()
   const { t } = useLanguage()
-  const { checkAuth, loginPromptOpen, closeLoginPrompt, currentFeature } = useAuthCheck()
-  const { toast } = useReduxToast()
+  const { data: session, status } = useSession()  // New hook for Keycloak auth via Next‑Auth
+  // const { toast } = useReduxToast()
 
   // Ensure job has valid company data
   const jobWithCompany = {
@@ -45,12 +44,12 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
     },
   }
 
-  // Sử dụng Redux selectors
-  const isFavorite = useAppSelector((state) => selectIsJobFavorite(state, Number(job.id)))
-  const isArchived = useAppSelector((state) => selectIsJobArchived(state, Number(job.id)))
-  const isHidden = useAppSelector((state) => selectIsJobHidden(state, Number(job.id)))
+  // Redux selectors
+  const isFavorite = useAppSelector((state) => selectIsJobFavorite(state, job.id))
+  const isArchived = useAppSelector((state) => selectIsJobArchived(state, job.id))
+  const isHidden = useAppSelector((state) => selectIsJobHidden(state, job.id))
 
-  // Sử dụng useJobCard hook để quản lý trạng thái và hành động
+  // useJobCard hook manages local state and actions
   const {
     state,
     dialogRefs,
@@ -71,93 +70,84 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
   } = useJobCard({
     job: jobWithCompany,
     type,
-    onFavorite,
-    onArchive,
-    onHide,
-    onRestore,
+    onFavorite, // Truyền thẳng onFavorite (id: string) => void
+    onArchive,  // Truyền thẳng onArchive (id: string) => void
+    onHide,     // Truyền thẳng onHide (id: string) => void
+    onRestore,  // Truyền thẳng onRestore (id: string) => void
   })
 
-  // Create action functions that will be executed only when needed
+  // Action functions without auth wrapper
   const handleFavoriteAction = useCallback(() => {
-    console.log(`Direct toggle favorite for job ${job.id}, current state: ${isFavorite}`)
-
     if (isFavorite && type === "favorite") {
       handleUnfavoriteClick()
     } else {
-      dispatch(toggleFavorite(Number(job.id)))
+      dispatch(toggleFavorite(job.id))
       if (onFavorite) {
-        onFavorite(Number(job.id))
+        onFavorite(job.id)
       }
-      toast({
-        title: isFavorite ? t("toast.removedFromFavorites") : t("toast.addedToFavorites"),
-        type: "success",
-        duration: 3000,
-      })
+      // toast({
+      //   title: isFavorite ? t("toast.removedFromFavorites") : t("toast.addedToFavorites"),
+      //   type: "success",
+      //   duration: 3000,
+      // })
     }
-  }, [job.id, isFavorite, dispatch, onFavorite, t, type, handleUnfavoriteClick, toast])
+  }, [job.id, isFavorite, dispatch, onFavorite, t, type, handleUnfavoriteClick])
 
   const handleArchiveAction = useCallback(() => {
-    console.log(`Direct toggle archived for job ${job.id}, current state: ${isArchived}`)
-
     if (isArchived && type === "archived") {
       handleUnarchiveClick()
     } else {
-      dispatch(toggleArchived(Number(job.id)))
+      dispatch(toggleArchived(job.id))
       if (onArchive) {
-        onArchive(Number(job.id))
+        onArchive(job.id)
       }
-      toast({
-        title: isArchived ? t("toast.removedFromArchived") : t("toast.addedToArchived"),
-        type: "success",
-        duration: 3000,
-      })
+      // toast({
+      //   title: isArchived ? t("toast.removedFromArchived") : t("toast.addedToArchived"),
+      //   type: "success",
+      //   duration: 3000,
+      // })
     }
-  }, [job.id, isArchived, dispatch, onArchive, t, type, handleUnarchiveClick, toast])
+  }, [job.id, isArchived, dispatch, onArchive, t, type, handleUnarchiveClick])
 
-  // Create event handlers that use checkAuth to wrap the actions
+  // Auth wrapper: check Next‑Auth session status; if not authenticated, trigger signIn("keycloak")
+  const authWrapper = useCallback((action: () => void) => {
+    if (status !== "authenticated") {
+      signIn("keycloak")
+      return
+    }
+    action()
+  }, [status])
+
   const handleToggleFavorite = useCallback(() => {
-    const authCheckedAction = checkAuth(handleFavoriteAction, t("job.saveJob"))
-    authCheckedAction()
-  }, [checkAuth, handleFavoriteAction, t])
+    authWrapper(handleFavoriteAction)
+  }, [authWrapper, handleFavoriteAction])
 
   const handleToggleArchived = useCallback(() => {
-    const authCheckedAction = checkAuth(handleArchiveAction, t("dashboard.archivedJobs").toLowerCase())
-    authCheckedAction()
-  }, [checkAuth, handleArchiveAction, t])
+    authWrapper(handleArchiveAction)
+  }, [authWrapper, handleArchiveAction])
 
-  // Update the handleHideClick function
   const handleHideClickWithAuth = useCallback(() => {
-    const authCheckedAction = checkAuth(() => {
+    authWrapper(() => {
       handleHideClick()
+      // toast({
+      //   title: t("toast.jobHidden"),
+      //   type: "success",
+      //   duration: 3000,
+      // })
+    })
+  }, [authWrapper, handleHideClick, t])
 
-      // Show toast notification
-      toast({
-        title: t("toast.jobHidden"),
-        type: "success",
-        duration: 3000,
-      })
-    }, t("common.hide").toLowerCase())
-
-    authCheckedAction()
-  }, [checkAuth, handleHideClick, t, toast])
-
-  // Update the handleRestoreClick function
   const handleRestoreClickWithAuth = useCallback(() => {
-    const authCheckedAction = checkAuth(() => {
+    authWrapper(() => {
       handleRestoreClick()
+      // toast({
+      //   title: t("toast.jobRestored"),
+      //   type: "success",
+      //   duration: 3000,
+      // })
+    })
+  }, [authWrapper, handleRestoreClick, t])
 
-      // Show toast notification
-      toast({
-        title: t("toast.jobRestored"),
-        type: "success",
-        duration: 3000,
-      })
-    }, t("dashboard.restore").toLowerCase())
-
-    authCheckedAction()
-  }, [checkAuth, handleRestoreClick, t, toast])
-
-  // Destructure state for readability
   const { isHovered, dialogs, dontAskAgain, temporaryStates } = state
 
   if (!job) {
@@ -170,7 +160,6 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
     )
   }
 
-  // If temporarily hidden, unfavorited, or unarchived, show appropriate message
   if (temporaryStates?.hidden) {
     return <JobCardTemporaryState type="hidden" onRestore={handleTemporaryRestore} />
   }
@@ -186,22 +175,19 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
   return (
     <>
       <div
-        className="w-full rounded-xl shadow-md overflow-hidden relative bg-[#F0F0F0] transition-all"
+        className="w-full rounded-xl overflow-hidden relative bg-[#F0F0F0] transition-all"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        {/* Job Details */}
         <JobCardDetails
           company={jobWithCompany.company}
-          category={jobWithCompany.category ?? ""} // Provide default empty string
+          category={jobWithCompany.category ?? ""}
           title={jobWithCompany.title}
-          city={jobWithCompany.city ?? ""} // Provide default empty string
-          jobType={jobWithCompany.type ?? ""} // Provide default empty string
+          city={jobWithCompany.city ?? ""}
+          jobType={jobWithCompany.type ?? ""}
           salaryDisplay={`${jobWithCompany.minSalary || 0}-${jobWithCompany.maxSalary || 0}k`}
           daysLeft={jobWithCompany.daysLeft || 10}
         />
-
-        {/* Action Buttons */}
         <JobCardActions
           isFavorite={isFavorite}
           isArchived={isArchived}
@@ -214,7 +200,6 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
         />
       </div>
 
-      {/* Confirmation Dialog for Hide */}
       <JobCardDialog
         dialogType="hide"
         isOpen={dialogs.hide}
@@ -224,7 +209,7 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
             setDontAskAgain({
               preference: "hide",
               value: checked,
-            }),
+            })
           )
         }}
         onCancel={cancelHide}
@@ -232,7 +217,6 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
         dialogRef={dialogRefs.hide}
       />
 
-      {/* Unfavorite Confirmation Dialog */}
       <JobCardDialog
         dialogType="favorite"
         isOpen={dialogs.favorite}
@@ -242,7 +226,7 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
             setDontAskAgain({
               preference: "favorite",
               value: checked,
-            }),
+            })
           )
         }}
         onCancel={cancelUnfavorite}
@@ -250,7 +234,6 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
         dialogRef={dialogRefs.favorite}
       />
 
-      {/* Unarchive Confirmation Dialog */}
       <JobCardDialog
         dialogType="archive"
         isOpen={dialogs.archive}
@@ -260,16 +243,13 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
             setDontAskAgain({
               preference: "archive",
               value: checked,
-            }),
+            })
           )
         }}
         onCancel={cancelUnarchive}
         onConfirm={performUnarchive}
         dialogRef={dialogRefs.archive}
       />
-
-      {/* Login Prompt */}
-      <LoginPrompt open={loginPromptOpen} onClose={closeLoginPrompt} featureName={currentFeature} />
     </>
   )
 }

@@ -10,7 +10,7 @@ import {
   getArchivedJobs,
 } from "@/lib/job-service";
 import { useLanguage } from "@/lib/i18n/context";
-import { useReduxToast } from "@/hooks/use-redux-toast";
+// import { useReduxToast } from "@/hooks/use-redux-toast";
 import type { Job } from "@/lib/types";
 import type { DisplayMode } from "@/components/job/display-mode-selector";
 
@@ -25,14 +25,14 @@ interface JobGridProps {
 
 export function JobGrid({
   type = "all",
-  itemsPerPage = 6,
+  itemsPerPage = 16,
   searchTerm = "",
   filters = {},
-  displayMode = { columns: 3, rows: 2 },
+  displayMode = { columns: 4, rows: 4 },
   jobs: initialJobs, // <-- accept jobs as a prop
 }: JobGridProps) {
   const { t } = useLanguage();
-  const { toast } = useReduxToast();
+  // const { toast } = useReduxToast();
   const [jobs, setJobs] = useState<Job[]>(initialJobs);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -96,15 +96,15 @@ export function JobGrid({
       setJobs(fetchedJobs);
     } catch (error) {
       console.error(`Error fetching ${type} jobs:`, error);
-      toast({
-        title: t("common.error"),
-        description: t("job.errorFetchingJobs"),
-        type: "error",
-      });
+      // toast({
+      //   title: t("common.error"),
+      //   description: t("job.errorFetchingJobs"),
+      //   type: "error",
+      // });
     } finally {
       setLoading(false);
     }
-  }, [type, searchTerm, filters, t, toast]);
+  }, [type, searchTerm, filters, t]);
 
   useEffect(() => {
     // Only fetch if params have changed
@@ -180,11 +180,11 @@ export function JobGrid({
 
   // Determine grid columns based on displayMode
   const gridColsClass =
-    displayMode.columns === 1
-      ? "grid-cols-1"
-      : displayMode.columns === 2
-      ? "grid-cols-1 md:grid-cols-2"
-      : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+    displayMode.columns === 4
+      ? "grid-cols-4"
+      : displayMode.columns === 3
+      ? "grid-cols-1 md:grid-cols-4"
+      : "grid-cols-1 md:grid-cols-4 lg:grid-cols-4";
 
   return (
     <div className="space-y-6">

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import { signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 export function MinimalNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,7 +22,7 @@ export function MinimalNav() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <Link
-              href="/about"
+              href="/profiles"
               className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               About
@@ -48,7 +48,7 @@ export function MinimalNav() {
             >
               FAQs
             </Link>
-            {/* <Button onClick={() => signIn("keycloak")}>Sign In</Button> */}
+            <Button onClick={() => signIn("keycloak")}>Sign In</Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -99,11 +99,9 @@ export function MinimalNav() {
               >
                 FAQs
               </Link>
-              <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
-                <Button size="sm" variant="outline" className="w-full">
+                <Button onClick={() => signIn("keycloak")}>
                   Sign In
                 </Button>
-              </Link>
             </div>
           </div>
         )}

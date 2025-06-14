@@ -7,17 +7,12 @@ import { initializeJobActions } from "@/lib/redux/slices/jobActionsSlice"
 import { fetchNotifications } from "@/lib/redux/slices/notificationSlice"
 import { setMobileState, setOrientation } from "@/lib/redux/slices/uiSlice"
 import { fetchResumes } from "@/lib/redux/slices/resumeSlice"
-import { initializeAuth } from "@/lib/redux/slices/authSlice"
-
 export function ReduxInitializer() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     // Initialize app configuration
     initAppConfig()
-
-    // Initialize auth state
-    dispatch(initializeAuth())
 
     // Initialize job actions
     dispatch(initializeJobActions())
@@ -33,7 +28,13 @@ export function ReduxInitializer() {
       // Set mobile and orientation state
       const handleResize = () => {
         dispatch(setMobileState(window.innerWidth < 768))
-        dispatch(setOrientation(window.matchMedia("(orientation: portrait)").matches))
+        dispatch(
+          setOrientation(
+            window.matchMedia("(orientation: portrait)").matches
+              ? "portrait"
+              : "landscape"
+          )
+        )
       }
 
       // Initial call

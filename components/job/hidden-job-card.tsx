@@ -2,7 +2,7 @@
 
 import { JobCard } from "@/components/job/job-card"
 import type { Job } from "@/lib/types"
-import { useReduxToast } from "@/hooks/use-redux-toast"
+// import { useReduxToast } from "@/hooks/use-redux-toast"
 import { useLanguage } from "@/lib/i18n/context"
 
 interface HiddenJobCardProps {
@@ -11,7 +11,7 @@ interface HiddenJobCardProps {
 }
 
 export function HiddenJobCard({ job, onRestore }: HiddenJobCardProps) {
-  const { toast } = useReduxToast()
+  // const { toast } = useReduxToast()
   const { t } = useLanguage()
 
   const handleRestore = () => {
@@ -19,11 +19,11 @@ export function HiddenJobCard({ job, onRestore }: HiddenJobCardProps) {
       onRestore(job.id)
 
       // Show toast notification
-      toast({
-        title: t("toast.jobRestored"),
-        type: "success",
-        duration: 3000,
-      })
+      // toast({
+      //   title: t("toast.jobRestored"),
+      //   type: "success",
+      //   duration: 3000,
+      // })
     }
   }
 

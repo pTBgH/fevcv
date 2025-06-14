@@ -1,25 +1,29 @@
-import { format } from "date-fns"
+// file: lib/cv-utils.ts
 
-export function generateCVName(existingNames: string[]): string {
-  const baseDate = format(new Date(), "MMM dd, yyyy")
+/**
+ * Generates a unique CV name.
+ * @param existingNames - An array of existing CV titles to check against for duplicates.
+ * @param suggestion - (Optional) A suggested name, like the original filename.
+ * @returns A unique CV title string.
+ */
+export function generateCVName(existingNames: string[], suggestion?: string): string {
+  // 1. Dùng tên gợi ý nếu có, nếu không thì dùng tên mặc định
+  const baseName = suggestion 
+    ? suggestion.replace(/\.[^/.]+$/, "") // Xóa extension nếu có
+    : "Untitled CV";
 
-  // If no CV with this date exists, return the base date
-  if (!existingNames.includes(baseDate)) {
-    return baseDate
+  // 2. Kiểm tra xem tên đã tồn tại chưa
+  if (!existingNames.includes(baseName)) {
+    return baseName; // Nếu chưa tồn tại, dùng luôn
   }
 
-  // Find the highest number in parentheses for this date
-  let maxNumber = 0
-  existingNames.forEach((name) => {
-    if (name.startsWith(baseDate)) {
-      const match = name.match(/$$(\d+)$$$/)
-      if (match) {
-        const number = Number.parseInt(match[1], 10)
-        maxNumber = Math.max(maxNumber, number)
-      }
-    }
-  })
-
-  // Return the date with the next number
-  return `${baseDate} (${maxNumber + 1})`
+  // 3. Nếu đã tồn tại, thêm số vào cuối cho đến khi tìm được tên duy nhất
+  let counter = 1;
+  let newName = `${baseName} (${counter})`;
+  while (existingNames.includes(newName)) {
+    counter++;
+    newName = `${baseName} (${counter})`;
+  }
+  
+  return newName;
 }

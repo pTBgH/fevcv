@@ -10,8 +10,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export type DisplayModeOption = "2x2" | "3x3" | "1x1" | "2x1";
 
 export type DisplayMode = {
-  columns: 1 | 2 | 3;
-  rows: 1 | 2 | 3;
+  columns: 1 | 2 | 3 | 4;
+  rows: 1 | 2 | 3 | 4;
 };
 
 interface DisplayModeSelectorProps {

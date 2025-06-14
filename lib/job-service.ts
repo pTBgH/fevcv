@@ -22,6 +22,7 @@ const transformedJobs: Job[] = jobsData.map((job: any) => ({
   minSalary: job.Min_Salary === "not available" || job.Min_Salary === "Not available" ? null : Number(job.Min_Salary),
   maxSalary: job.Max_Salary === "not available" || job.Max_Salary === "Not available" ? null : Number(job.Max_Salary),
   endDate: job.Job_Date_end,
+  experienceLevel: job.Experience_Level || "Not Specified",
   company: {
     name: `Company ${job.Job_ID}`, // Placeholder
     logo: "/placeholder.svg?height=64&width=64",

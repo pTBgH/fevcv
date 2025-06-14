@@ -11,8 +11,8 @@
       "fileType": "pdf",
       "data": {
         "degree": "Bachelor of Science in Computer Science",
-        "technicalSkills": "JavaScript, React, Node.js, Python",
-        "softSkills": "Communication, Teamwork, Problem-solving",
+        "technical_skill": "JavaScript, React, Node.js, Python",
+        "soft_skill": "Communication, Teamwork, Problem-solving",
         "experience": "3 years as a Full Stack Developer"
       }
     },
@@ -27,8 +27,8 @@
       "fileType": "pdf",
       "data": {
         "degree": "Master of Science in Data Science",
-        "technicalSkills": "Python, R, SQL, Machine Learning",
-        "softSkills": "Data Visualization, Statistical Analysis, Critical Thinking",
+        "technical_skill": "Python, R, SQL, Machine Learning",
+        "soft_skill": "Data Visualization, Statistical Analysis, Critical Thinking",
         "experience": "2 years as a Data Analyst"
       }
     },
@@ -43,8 +43,8 @@
       "fileType": "pdf",
       "data": {
         "degree": "Bachelor of Fine Arts in Graphic Design",
-        "technicalSkills": "Adobe Creative Suite, Figma, Sketch",
-        "softSkills": "Creativity, User Empathy, Collaboration",
+        "technical_skill": "Adobe Creative Suite, Figma, Sketch",
+        "soft_skill": "Creativity, User Empathy, Collaboration",
         "experience": "4 years as a UX/UI Designer"
       }
     },
@@ -59,8 +59,8 @@
       "fileType": "doc",
       "data": {
         "degree": "MBA in Product Management",
-        "technicalSkills": "Agile, Scrum, JIRA, Product Roadmapping",
-        "softSkills": "Leadership, Strategic Thinking, Communication",
+        "technical_skill": "Agile, Scrum, JIRA, Product Roadmapping",
+        "soft_skill": "Leadership, Strategic Thinking, Communication",
         "experience": "5 years as a Product Manager"
       }
     },
@@ -75,8 +75,8 @@
       "fileType": "doc",
       "data": {
         "degree": "Bachelor of Business Administration in Marketing",
-        "technicalSkills": "Google Analytics, SEO, Social Media Marketing",
-        "softSkills": "Creativity, Communication, Analytical Thinking",
+        "technical_skill": "Google Analytics, SEO, Social Media Marketing",
+        "soft_skill": "Creativity, Communication, Analytical Thinking",
         "experience": "3 years as a Digital Marketing Specialist"
       }
     },
@@ -91,8 +91,8 @@
       "fileType": "pdf",
       "data": {
         "degree": "Bachelor of Computer Science",
-        "technicalSkills": "HTML, CSS, JavaScript, React, Vue.js",
-        "softSkills": "Problem-solving, Attention to Detail, Teamwork",
+        "technical_skill": "HTML, CSS, JavaScript, React, Vue.js",
+        "soft_skill": "Problem-solving, Attention to Detail, Teamwork",
         "experience": "4 years as a Frontend Developer"
       }
     },
@@ -107,8 +107,8 @@
       "fileType": "docx",
       "data": {
         "degree": "Master of Computer Science",
-        "technicalSkills": "Node.js, Python, Java, SQL, NoSQL",
-        "softSkills": "Problem-solving, Analytical Thinking, Communication",
+        "technical_skill": "Node.js, Python, Java, SQL, NoSQL",
+        "soft_skill": "Problem-solving, Analytical Thinking, Communication",
         "experience": "5 years as a Backend Developer"
       }
     }

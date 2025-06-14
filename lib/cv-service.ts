@@ -1,224 +1,167 @@
-import type { Resume } from "./types"
-import cvData from "@/data/cv-data.json"
-import { format, parseISO, addDays } from "date-fns"
-import { addResumeHistoryItem } from "./history-service"
+import type { Resume } from "./types";
+import { format, parseISO, addDays } from "date-fns";
 
-// Số ngày trước khi CV bị xóa vĩnh viễn
-const PERMANENT_DELETE_DAYS = 7
+const PERMANENT_DELETE_DAYS = 7;
 
-// Lấy tất cả CV (bao gồm cả CV đã xóa)
-export function getAllResumes(): Resume[] {
-  return (cvData.resumes as Resume[]).map((resume) => ({
-    ...resume,
-    // Đảm bảo các trường bắt buộc luôn có giá trị
-    id: resume.id || "",
-    title: resume.title || generateCVName(),
-    createdAt: resume.createdAt || new Date().toISOString(),
-    updatedAt: resume.updatedAt || new Date().toISOString(),
-    fileUrl: resume.fileUrl || "/samples/resume-1.pdf",
-    fileType: resume.fileType || "pdf",
-    isFavorite: resume.isFavorite || false,
-    deletedAt: resume.deletedAt || null,
-    data: resume.data || {
-      degree: "",
-      technicalSkills: "",
-      softSkills: "",
-      experience: "",
-    },
-  }))
+export function formatResumeDate(dateString: string | null): string {
+  // Thêm kiểm tra null
+  if (!dateString) return "Unknown Date"; 
+  try {
+    const date = parseISO(dateString);
+    return format(date, "MMM dd, yyyy");
+  } catch (error) {
+    return "Invalid Date";
+  }
 }
 
-// Lấy CV đang hoạt động (không bị xóa)
-export function getActiveResumes(): Resume[] {
-  return getAllResumes().filter((resume) => resume.deletedAt === null)
-}
-
-// Lấy CV đã xóa
-export function getDeletedResumes(): Resume[] {
-  return getAllResumes().filter((resume) => resume.deletedAt !== null)
-}
-
-// Lấy CV yêu thích
-export function getFavoriteResumes(): Resume[] {
-  return getAllResumes().filter((resume) => resume.isFavorite && resume.deletedAt === null)
-}
-
-// Lấy CV theo ID
-export function getResumeById(id: string): Resume | undefined {
-  return getAllResumes().find((resume) => resume.id === id)
-}
-
-// Định dạng ngày tạo CV
-export function formatResumeDate(dateString: string): string {
-  const date = parseISO(dateString)
-  return format(date, "MMM dd, yyyy")
-}
-
-// Định dạng thời gian xóa CV
 export function formatDeletedTime(dateString: string | null): string {
-  if (!dateString) return ""
-  const date = parseISO(dateString)
-  return format(date, "h:mm a do MMMM yyyy")
+  if (!dateString) return "";
+  try {
+    const date = parseISO(dateString);
+    return format(date, "h:mm a, do MMMM yyyy");
+  } catch (error) {
+    return "Invalid Date";
+  }
 }
 
-// Kiểm tra xem CV có thể khôi phục không (chưa quá 7 ngày)
 export function canRestore(resume: Resume): boolean {
-  if (resume.deletedAt === null) return false
-  const deletedDate = parseISO(resume.deletedAt)
-  const permanentDeleteDate = addDays(deletedDate, PERMANENT_DELETE_DAYS)
-  return new Date() < permanentDeleteDate
+  if (resume.deletedAt === null) return false;
+  try {
+    const deletedDate = parseISO(resume.deletedAt);
+    const permanentDeleteDate = addDays(deletedDate, PERMANENT_DELETE_DAYS);
+    return new Date() < permanentDeleteDate;
+  } catch (error) {
+    return false;
+  }
 }
 
-// Tính số ngày còn lại trước khi CV bị xóa vĩnh viễn
 export function daysUntilPermanentDelete(resume: Resume): number {
-  if (resume.deletedAt === null) return 0
-  const deletedDate = parseISO(resume.deletedAt)
-  const permanentDeleteDate = addDays(deletedDate, PERMANENT_DELETE_DAYS)
-  const now = new Date()
-  const msLeft = permanentDeleteDate.getTime() - now.getTime()
-  return Math.ceil(msLeft / (1000 * 60 * 60 * 24))
+  if (resume.deletedAt === null) return 0;
+  try {
+    const deletedDate = parseISO(resume.deletedAt);
+    const permanentDeleteDate = addDays(deletedDate, PERMANENT_DELETE_DAYS);
+    const now = new Date();
+    const msLeft = permanentDeleteDate.getTime() - now.getTime();
+    return Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+  } catch (error) {
+    return 0;
+  }
 }
 
-// Tạo tên CV mới dựa trên ngày
-export function generateCVName(): string {
-  return format(new Date(), "MMM dd, yyyy")
-}
+// --- CÁC HÀM THAO TÁC DỮ LIỆU - VIẾT LẠI HOÀN TOÀN ĐỂ GỌI API ---
 
-// Giả lập thêm CV mới
-export function addResume(data: Partial<Resume>): Resume {
-  const newResume: Resume = {
-    id: String(cvData.resumes.length + 1),
-    title: data.title || generateCVName(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    file: data.file || "/samples/resume.pdf",
-    fileUrl: data.fileUrl || "/samples/resume-1.pdf",
-    fileType: data.fileType || "pdf",
-    isFavorite: data.isFavorite || false,
-    deletedAt: null,
-    data: data.data || {
-      degree: "",
-      technicalSkills: "",
-      softSkills: "",
-      experience: "",
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+/**
+ * Lấy danh sách tất cả CV từ backend.
+ * Cần accessToken để xác thực người dùng.
+ * @param accessToken - JWT token từ session
+ * @returns Promise<Resume[]>
+ */
+export async function getResumes(accessToken: string): Promise<Resume[]> {
+  const response = await fetch(`${API_BASE_URL}/resumes`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Accept': 'application/json',
     },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch resumes');
   }
 
-  // Add to history
-  addResumeHistoryItem({
-    date: new Date().toISOString().split("T")[0],
-    time: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
-    action: "Upload",
-    resumeId: newResume.id,
-    resume: newResume.title,
-    link: "#",
-  })
-
-  // Trong ứng dụng thực tế, bạn sẽ lưu vào database
-  // Ở đây chúng ta chỉ giả lập
-  return newResume
+  return response.json();
 }
 
-// Giả lập cập nhật CV
-export function updateResume(id: string, data: Partial<Resume>): Resume | undefined {
-  const resume = getResumeById(id)
-  if (!resume) return undefined
 
-  // Cập nhật thông tin
-  const updatedResume = {
-    ...resume,
-    ...data,
-    updatedAt: new Date().toISOString(),
+/**
+ * Cập nhật một CV trên server.
+ * @param id - ID của CV cần cập nhật
+ * @param data - Dữ liệu cập nhật
+ * @param accessToken - JWT token
+ * @returns Promise<Resume>
+ */
+export async function updateResume(id: string, data: Partial<Resume>, accessToken: string): Promise<Resume> {
+  const response = await fetch(`${API_BASE_URL}/resumes/${id}`, {
+    method: 'PUT', // Hoặc 'PATCH'
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update resume');
   }
 
-  // Add to history
-  addResumeHistoryItem({
-    date: new Date().toISOString().split("T")[0],
-    time: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
-    action: "Edit",
-    resumeId: id,
-    resume: updatedResume.title,
-    link: "#",
-  })
-
-  // Trong ứng dụng thực tế, bạn sẽ lưu vào database
-  return updatedResume
+  return response.json();
 }
 
-// Giả lập xóa CV (soft delete)
-export function deleteResume(id: string): Resume | undefined {
-  const resume = getResumeById(id)
-  if (!resume) return undefined
+/**
+ * Xóa mềm một CV.
+ * @param id - ID của CV cần xóa
+ * @param accessToken - JWT token
+ * @returns Promise<void>
+ */
+export async function deleteResume(id: string, accessToken: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/resumes/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Accept': 'application/json',
+    },
+  });
 
-  // Đánh dấu là đã xóa
-  const deletedResume = {
-    ...resume,
-    deletedAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+  if (!response.ok) {
+    throw new Error('Failed to delete resume');
   }
-
-  // Add to history
-  addResumeHistoryItem({
-    date: new Date().toISOString().split("T")[0],
-    time: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
-    action: "Delete",
-    resumeId: id,
-    resume: resume.title,
-    link: "#",
-  })
-
-  // Trong ứng dụng thực tế, bạn sẽ lưu vào database
-  return deletedResume
+  // DELETE request thường không trả về body, chỉ cần kiểm tra status
 }
 
-// Giả lập khôi phục CV
-export function restoreResume(id: string): Resume | undefined {
-  const resume = getResumeById(id)
-  if (!resume || resume.deletedAt === null) return undefined
 
-  // Khôi phục CV
-  const restoredResume = {
-    ...resume,
-    deletedAt: null,
-    updatedAt: new Date().toISOString(),
-  }
+/**
+ * Khôi phục một CV đã xóa mềm.
+ * @param id - ID của CV cần khôi phục
+ * @param accessToken - JWT token
+ * @returns Promise<Resume>
+ */
+export async function restoreResume(id: string, accessToken: string): Promise<Resume> {
+    const response = await fetch(`${API_BASE_URL}/resumes/${id}/restore`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Accept': 'application/json',
+        },
+    });
 
-  // Add to history
-  addResumeHistoryItem({
-    date: new Date().toISOString().split("T")[0],
-    time: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
-    action: "Restore",
-    resumeId: id,
-    resume: resume.title,
-    link: "#",
-  })
-
-  // Trong ứng dụng thực tế, bạn sẽ lưu vào database
-  return restoredResume
+    if (!response.ok) {
+        throw new Error('Failed to restore resume');
+    }
+    
+    return response.json();
 }
 
-// Giả lập toggle yêu thích CV
-export function toggleFavorite(id: string): Resume | undefined {
-  const resume = getResumeById(id)
-  if (!resume) return undefined
 
-  // Toggle trạng thái yêu thích
-  const updatedResume = {
-    ...resume,
-    isFavorite: !resume.isFavorite,
-    updatedAt: new Date().toISOString(),
-  }
+/**
+ * Toggle trạng thái yêu thích của một CV.
+ * @param id - ID của CV
+ * @param accessToken - JWT token
+ * @returns Promise<Resume>
+ */
+export async function toggleFavoriteApi(id: string, accessToken: string): Promise<Resume> {
+    const response = await fetch(`${API_BASE_URL}/resumes/${id}/toggle-favorite`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Accept': 'application/json',
+        },
+    });
 
-  // Add to history
-  addResumeHistoryItem({
-    date: new Date().toISOString().split("T")[0],
-    time: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
-    action: updatedResume.isFavorite ? "Favorite" : "Unfavorite",
-    resumeId: id,
-    resume: resume.title,
-    link: "#",
-  })
+    if (!response.ok) {
+        throw new Error('Failed to toggle favorite status');
+    }
 
-  // Trong ứng dụng thực tế, bạn sẽ lưu vào database
-  return updatedResume
+    return response.json();
 }

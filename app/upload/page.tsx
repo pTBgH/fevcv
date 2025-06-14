@@ -1,8 +1,9 @@
 "use client";
 
 import type { DragEvent, ChangeEvent } from "react";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 import { Upload, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,30 +11,22 @@ import { useLanguage } from "@/lib/i18n/context";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { addResume } from "@/lib/redux/slices/resumeSlice";
-import { useToastContext } from "@/components/common/toast-provider";
+// import { useToastContext } from "@/components/common/toast-provider";
 import { format } from "date-fns";
-import { useAuth } from "@/hooks/use-auth";
 
 const allowedFormats = ["pdf", "doc", "docx"];
 
 export default function UploadPage() {
   const router = useRouter();
-  const [isDragging, setIsDragging] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [fileMessage, setFileMessage] = useState<string>("");
-  const [isValidFile, setIsValidFile] = useState(false);
-  const { t } = useLanguage();
   const dispatch = useAppDispatch();
-  const { toast } = useToastContext();
-  const { isAuthenticated, isLoading, requireAuth } = useAuth();
+  const { t } = useLanguage();
+  // const { toast } = useToastContext();
 
-  // Ensure `requireAuth` is always called, even if `isLoading` is true
-  useEffect(() => {
-    requireAuth();
-  }, [requireAuth]);
+  // Using next‑auth session for Keycloak auth
+  const { data: session, status } = useSession();
 
-  // Early return for loading state
-  if (isLoading) {
+  // Show a loader while authentication state is loading
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -41,10 +34,16 @@ export default function UploadPage() {
     );
   }
 
-  // Early return for unauthenticated state
-  if (!isAuthenticated) {
+  // If not authenticated, trigger signIn using Keycloak provider
+  if (status === "unauthenticated") {
+    signIn("keycloak");
     return null;
   }
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [fileMessage, setFileMessage] = useState<string>("");
+  const [isValidFile, setIsValidFile] = useState(false);
 
   const validateFile = (file: File) => {
     const extension = file.name.split(".").pop()?.toLowerCase();
@@ -65,7 +64,6 @@ export default function UploadPage() {
     (e: DragEvent) => {
       e.preventDefault();
       setIsDragging(false);
-
       const files = e.dataTransfer.files;
       if (files.length) {
         const selected = files[0];
@@ -102,11 +100,11 @@ export default function UploadPage() {
 
   const handleAccept = () => {
     if (!isValidFile) {
-      toast({
-        title: t("toast.invalidFile"),
-        description: t("toast.pleaseUploadValidFile"),
-        type: "error",
-      });
+      // toast({
+      //   title: t("toast.invalidFile"),
+      //   description: t("toast.pleaseUploadValidFile"),
+      //   type: "error",
+      // });
       return;
     }
 
@@ -123,19 +121,20 @@ export default function UploadPage() {
       isFavorite: false,
       data: {
         degree: "",
-        technicalSkills: "",
-        softSkills: "",
+        technical_skill: "",
+        soft_skill: "",
         experience: "",
+        file_path: ""
       },
     };
 
     dispatch(addResume(newResume));
 
-    toast({
-      title: t("toast.cvUploaded"),
-      description: file?.name,
-      type: "success",
-    });
+    // toast({
+    //   title: t("toast.cvUploaded"),
+    //   description: file?.name,
+    //   type: "success",
+    // });
 
     router.push("/upload/review");
   };
@@ -182,7 +181,6 @@ export default function UploadPage() {
               >
                 {fileMessage}
               </p>
-
               {!isValidFile && (
                 <Alert variant="destructive" className="mt-4">
                   <AlertCircle className="h-4 w-4" />
@@ -207,7 +205,7 @@ export default function UploadPage() {
 
         {file && (
           <div className="mt-4 flex justify-end gap-4">
-            <Button variant="outline" onClick={handleDiscard}>
+            <Button onClick={handleDiscard}>
               {t("common.discard")}
             </Button>
             <Button

@@ -18,7 +18,7 @@ import {
   Bell,
 } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/context"
-import { myAppHook } from "@/context/AppProvider"
+// import { myAppHook } from "@/context/AppProvider"
 
 export function Sidebar() {
   const [expanded, setExpanded] = useState(true)
@@ -27,7 +27,7 @@ export function Sidebar() {
   const { t, locale } = useLanguage()
   const pathname = usePathname()
   const router = useRouter()
-  const { logout } = myAppHook()
+  // const { logout } = myAppHook()
 
   useEffect(() => {
     const checkMobile = () => {
@@ -68,14 +68,14 @@ export function Sidebar() {
     }
   }
 
-  const handleLogout = () => {
-    if (typeof logout === "function") {
-      logout()
-    } else {
-      console.error("logout is not a function")
-    }
-    router.push("/")
-  }
+  // const handleLogout = () => {
+  //   if (typeof logout === "function") {
+  //     logout()
+  //   } else {
+  //     console.error("logout is not a function")
+  //   }
+  //   router.push("/")
+  // }
 
   // Modified sidebar class to include the toggle button inside
   const sidebarClass = isMobile
@@ -103,7 +103,7 @@ export function Sidebar() {
         )}
 
         <SidebarTop expanded={expanded} pathname={pathname} />
-        <SidebarBottom expanded={expanded} logoutHandler={handleLogout} />
+        {/* <SidebarBottom expanded={expanded} logoutHandler={handleLogout} /> */}
       </aside>
     </>
   )

@@ -1,151 +1,116 @@
 "use client"
 
 import { useLanguage } from "@/lib/i18n/context"
-import { getResumeById } from "@/lib/cv-service"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 
+// Định nghĩa kiểu dữ liệu được sử dụng trong component này.
+// Tên trường dùng snake_case để nhất quán với state ở component cha.
 interface ExtractedData {
   degree: string
-  technicalSkills: string
-  softSkills: string
+  technical_skill: string
+  soft_skill: string
   experience: string
 }
 
+// Định nghĩa props cho component ExtractedZone
 interface ExtractedZoneProps {
-  cvId: string
-  customData?: ExtractedData
-  isEditing?: boolean
-  onDataChange?: (field: string, value: string) => void
-  onEditClick?: () => void
+  customData: ExtractedData  // Bắt buộc phải có, nhận thẳng dữ liệu từ cha
+  isEditing: boolean         // Trạng thái chỉnh sửa
+  onDataChange: (field: keyof ExtractedData, value: string) => void // Hàm callback khi dữ liệu thay đổi
 }
 
+/**
+ * Component này hiển thị các vùng thông tin đã được trích xuất từ CV.
+ * Nó là một "dumb component", chỉ nhận dữ liệu và các hàm xử lý từ props.
+ */
 export function ExtractedZone({
-  cvId,
   customData,
-  isEditing = false,
+  isEditing,
   onDataChange,
-  onEditClick,
 }: ExtractedZoneProps) {
-  // Use customData if provided, otherwise get from service
-  const resumeData = customData ||
-    getResumeById(cvId)?.data || {
-      degree: "",
-      technicalSkills: "",
-      softSkills: "",
-      experience: "",
-    }
+  const { t } = useLanguage();
 
-  const { t } = useLanguage()
+  // Đơn giản chỉ cần gọi callback onDataChange đã được truyền từ component cha.
+  const handleContentChange = (field: keyof ExtractedData, value: string) => {
+    onDataChange(field, value);
+  };
 
-  const handleContentChange = (field: string, value: string) => {
-    onDataChange?.(field, value)
-  }
-
-  // Check if data is empty
+  // Kiểm tra xem có dữ liệu nào để hiển thị không.
   const isDataEmpty =
-    !resumeData.degree && !resumeData.technicalSkills && !resumeData.softSkills && !resumeData.experience
+    !customData.degree &&
+    !customData.technical_skill &&
+    !customData.soft_skill &&
+    !customData.experience;
 
-  if (isDataEmpty) {
+  // Chỉ hiển thị cảnh báo khi không ở chế độ edit và không có dữ liệu.
+  if (isDataEmpty && !isEditing) {
     return (
       <Alert
         variant="warning"
-        className="mb-4 bg-brand-cream text-black border border-brand-dark-gray"
+        className="bg-yellow-100 text-yellow-800 border-yellow-300"
       >
-        <AlertCircle className="h-4 w-4 mr-2 text-brand-dark-gray" />
-        <AlertDescription className="text-brand-dark-gray">{t("resume.noExtractedData")}</AlertDescription>
+        <AlertCircle className="h-4 w-4 mr-2" />
+        <AlertDescription>{t("resume.noExtractedData")}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
     <div className="space-y-6">
-      {/* Phần thông tin cá nhân - giả định rằng nó được hiển thị ở đây hoặc sẽ được tạo */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-brand-cream">
-        <h2 className="text-xl font-bold mb-4 text-black">Personal Information</h2>
-        {/* Các trường thông tin cá nhân sẽ được thêm vào đây, ví dụ:
-        <ExtractedField
-          title="Name"
-          content="Phùng Thái Bảo"
-          isEditing={false}
-          onContentChange={() => {}}
-        />
-        ... và các trường khác như Phone, Email, Link, Date of Birth, Gender
-        */}
-        {/* Hiện tại, chỉ placeholder hoặc để trống cho phần này */}
-        <div className="flex flex-col gap-4 text-black">
-          <ExtractedPersonalField title="Name" content="Phùng Thái Bảo" isEditing={isEditing} onContentChange={() => {}} />
-          <ExtractedPersonalField title="Gender" content="Male" isEditing={isEditing} onContentChange={() => {}} />
-          <ExtractedPersonalField title="Phone number" content="0999999999" isEditing={isEditing} onContentChange={() => {}} />
-          <ExtractedPersonalField title="Date of Birth" content="11/11/2004" isEditing={isEditing} onContentChange={() => {}} />
-          <ExtractedPersonalField title="Email" content="baophungthai8@gmail.com" isEditing={isEditing} onContentChange={() => {}} />
-          <ExtractedPersonalField title="Connected Link" content="likedin.com/in/nguyenvana" isEditing={isEditing} onContentChange={() => {}} />
+      {/* 
+        NOTE: Phần Personal Information đang là dữ liệu cứng (hard-coded).
+        Trong tương lai, bạn cũng nên quản lý các trường này bằng state 
+        giống như các trường trong "Resume Detail".
+      */}
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <h2 className="text-xl font-bold mb-4 text-gray-800">Personal Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+          <InfoField label="Name" value="Phùng Thái Bảo" />
+          <InfoField label="Gender" value="Male" />
+          <InfoField label="Phone number" value="0999999999" />
+          <InfoField label="Date of Birth" value="11/11/2004" />
+          <InfoField label="Email" value="baophungthai8@gmail.com" />
+          <InfoField label="Connected Link" value="linkedin.com/in/nguyenvana" />
         </div>
       </div>
 
-      {/* Phần chi tiết CV */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-brand-cream">
-        <h2 className="text-xl font-bold mb-4 text-black">Resume Detail</h2>
-        <div className="flex flex-col gap-6">
-          <ExtractedField
+      {/* Phần chi tiết CV có thể chỉnh sửa */}
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <h2 className="text-xl font-bold mb-4 text-gray-800">Resume Detail</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <EditableField
             title="Degree"
-            content={resumeData.degree || ""}
+            content={customData.degree}
             isEditing={isEditing}
             onContentChange={(value) => handleContentChange("degree", value)}
           />
-          <ExtractedField
+          <EditableField
             title="Technical Skills"
-            content={resumeData.technicalSkills || ""}
+            content={customData.technical_skill}
             isEditing={isEditing}
-            onContentChange={(value) => handleContentChange("technicalSkills", value)}
+            onContentChange={(value) => handleContentChange("technical_skill", value)}
           />
-          <ExtractedField
+          <EditableField
             title="Soft Skills"
-            content={resumeData.softSkills || ""}
+            content={customData.soft_skill}
             isEditing={isEditing}
-            onContentChange={(value) => handleContentChange("softSkills", value)}
+            onContentChange={(value) => handleContentChange("soft_skill", value)}
           />
-          <ExtractedField
+          <EditableField
             title="Experience"
-            content={resumeData.experience || ""}
+            content={customData.experience}
             isEditing={isEditing}
             onContentChange={(value) => handleContentChange("experience", value)}
           />
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-function ExtractedField({
-  title,
-  content,
-  isEditing,
-  onContentChange,
-}: {
-  title: string
-  content: string
-  isEditing: boolean
-  onContentChange: (value: string) => void
-}) {
-  return (
-    <div className="bg-white rounded-xl p-4 h-full border border-brand-cream">
-      <h3 className="text-lg font-bold mb-2 text-black">{title}</h3>
-      {isEditing ? (
-        <textarea
-          className="w-full h-32 p-2 border border-brand-dark-gray rounded-md bg-white text-black focus:outline-none focus:ring-1 focus:ring-brand-dark-gray resize-none"
-          value={content}
-          onChange={(e) => onContentChange(e.target.value)}
-        />
-      ) : (
-        <div className="text-brand-dark-gray whitespace-pre-wrap min-h-[100px]">{content || "—"}</div>
-      )}
-    </div>
-  )
-}
-
-// New component for personal information fields
-function ExtractedPersonalField({
+// Component con để hiển thị các trường có thể chỉnh sửa
+function EditableField({
   title,
   content,
   isEditing,
@@ -158,19 +123,30 @@ function ExtractedPersonalField({
 }) {
   return (
     <div className="flex flex-col">
-      <span className="text-sm font-medium text-brand-dark-gray mb-1">{title}</span>
+      <h3 className="text-lg font-semibold mb-2 text-gray-700">{title}</h3>
       {isEditing ? (
-        <input
-          type="text"
-          className="w-full p-2 border border-brand-dark-gray rounded-md bg-white text-black focus:outline-none focus:ring-1 focus:ring-brand-dark-gray"
+        <textarea
+          className="w-full h-40 p-3 border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
           value={content}
           onChange={(e) => onContentChange(e.target.value)}
         />
       ) : (
-        <span className="text-black font-semibold">{content || "—"}</span>
+        <div className="text-gray-800 whitespace-pre-wrap min-h-[40px] p-3 bg-gray-50 rounded-md border">
+          {content || "—"}
+        </div>
       )}
     </div>
   );
 }
 
-export default ExtractedZone
+// Component con để hiển thị các trường thông tin cá nhân (chỉ hiển thị)
+function InfoField({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="flex flex-col">
+            <span className="text-sm text-gray-500">{label}</span>
+            <span className="text-base font-medium text-gray-900">{value || "—"}</span>
+        </div>
+    );
+}
+
+// Giờ đây bạn không cần export default nữa vì component chính là ExtractedZone

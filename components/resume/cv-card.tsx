@@ -57,7 +57,7 @@ export const CVCard = forwardRef<HTMLDivElement, CVCardProps>(
                 // Áp dụng khi isSelected = true
                 "bg-black text-white border-black": isSelected,
                 // Áp dụng khi isSelected = false
-                "bg-brand-background text-black border-black hover:bg-brand-cream": !isSelected, 
+                "bg-brand-background text-black border-black hover:bg-gray-300": !isSelected, 
             }
         )}
         onClick={onSelect}

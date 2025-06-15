@@ -2,6 +2,18 @@
 
 export const vi = {
   // Các trang chính
+
+  navigation: {
+    home: "Trang chủ",
+    about: "Giới thiệu",
+    services: "Dịch vụ",
+    searchJobs: "Tìm kiếm việc làm",
+    faqs: "FAQs",
+    profile: "Hồ sơ",
+    settings: "Cài đặt",
+    logout: "Đăng xuất",
+  },
+
   common: {
     home: "Trang chủ",
     upload: "Tải lên",
@@ -41,28 +53,7 @@ export const vi = {
     less: "Thu gọn",
     show: "Hiển thị",
     hide: "Ẩn",
-    yes: "Có",
-    no: "Không",
-    or: "Hoặc",
-    and: "Và",
-    by: "Bởi",
-    on: "Vào",
-    at: "Tại",
-    to: "Đến",
-    from: "Từ",
-    with: "Với",
-    for: "Cho",
-    of: "Của",
-    in: "Trong",
-    continue: "Tiếp tục",
-    unselect: "Bỏ chọn",
-    collapse: "Thu gọn",
-    expand: "Mở rộng",
-    columns: "Cột",
-    rows: "Hàng",
-    displayMode: "Chế độ hiển thị",
-    undo: "Hoàn tác",
-    optimizeForResume: "Tối ưu hóa cho CV",
+    uploadNew: "Tải lên CV mới",
   },
 
   // Trang chủ
@@ -83,6 +74,7 @@ export const vi = {
     jobNewsSubscribe: "Tin tức việc làm mới nhất, bài viết được gửi đến hộp thư của bạn hàng tuần.",
     emailAddress: "Địa chỉ email",
     subscribe: "Đăng ký",
+    suggestJobs: "Gợi ý việc làm",
   },
 
   // Tìm kiếm
@@ -175,7 +167,9 @@ export const vi = {
     clickToViewDetails: "Nhấp để xem chi tiết CV",
     selectResume: "Chọn CV",
     chooseResume: "Chọn một CV",
-    uploadNewCv: "Tải lên CV mới",
+    uploadNew: "Tải lên CV mới",
+    suggestJobs: "Gợi ý việc làm",
+
   },
 
   // Dashboard
@@ -250,7 +244,6 @@ export const vi = {
     unarchive: "Đã bỏ lưu trữ {{entity}}",
     hide: "Đã ẩn {{entity}}",
     delete: "Đã xóa {{entity}}",
-    restore: "Đã khôi phục {{entity}}",
   },
 
   // Dialog
@@ -301,7 +294,6 @@ export const vi = {
     notificationDetail: "Chi tiết thông báo",
     notificationNotFound: "Không tìm thấy thông báo",
     loading: "Đang tải thông báo...",
-    error: "Lỗi khi tải thông báo",
   },
   job: {
     jobDetails: "Chi tiết công việc",

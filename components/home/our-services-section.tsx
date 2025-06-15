@@ -113,7 +113,7 @@ export function OurServicesSection() {
               <div
                 key={service.id}
                 className={cn(
-                  "service-card mb-24 bg-white dark:bg-gray-800 rounded-lg p-8 transition-all duration-500",
+                  "service-card mb-24 bg-brand-cream dark:bg-gray-800 rounded-lg p-8 transition-all duration-500",
                   "min-h-[300px]",
                   activeService === index
                     ? "scale-100 opacity-100"

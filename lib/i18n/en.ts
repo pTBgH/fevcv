@@ -1,5 +1,18 @@
+import SuggestedJobCard from "@/components/suggested-job-card";
+
 export const en = {
   // Các trang chính
+
+  navigation: {
+    about: "About",
+    services: "Services",
+    searchJobs: "Search Jobs",
+    faqs: "FAQs",
+    profile: "Profile",
+    settings: "Settings",
+    logout: "Log out",
+  },
+
   common: {
     home: "Home",
     upload: "Upload",
@@ -178,6 +191,7 @@ export const en = {
     selectResume: "Select Resume",
     chooseResume: "Choose a resume",
     uploadNewCv: "Upload new CV",
+    suggestJobs: "Suggest",
   },
 
   // Dashboard
@@ -302,7 +316,6 @@ export const en = {
     notificationDetail: "Notification Detail",
     notificationNotFound: "Notification not found",
     loading: "Loading notifications...",
-    error: "Error loading notifications",
   },
   job: {
     jobDetails: "Job Details",

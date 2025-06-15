@@ -1,0 +1,1 @@
+Do cái Input của thư viện đang dùng căn chỉnh khá khó chịu (là ấn vào và hiện VIỀN XANH) nên vào UI/input.tsx xóa tất cả "focus-visible:..."

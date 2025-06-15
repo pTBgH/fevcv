@@ -237,10 +237,10 @@ export function CVUploadSection() {
             />
           </div>
           <Button
-            className="w-full mt-8 py-4 bg-brand-cream text-brand-dark-gray font-medium rounded-2xl hover:bg-brand-dark-gray hover:text-white"
-            onClick={() => router.push('/search')}
+            className="w-full mt-8 py-4 bg-black text-white font-medium rounded-2xl hover:bg-brand-dark-gray hover:text-white"
+            onClick={handleDropzoneClick}
           >
-            {t("home.getJobSuggestions") || "Get free jobs suggestion"}
+            {t("common.uploadNew") || "Get free jobs suggestion"}
           </Button>
         </div>
       </div>

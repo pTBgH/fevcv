@@ -32,6 +32,8 @@ import { FileText, Upload, Loader2 } from "lucide-react";
 import { MinimalNav } from "@/components/home/minimal-nav";
 import type { Job, Resume } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { AnimatedButton } from "@/components/common/rolate-button";
+ 
 
 // Sửa lại interface này để nhất quán với backend và Redux
 // Dùng snake_case như bạn đã yêu cầu
@@ -233,6 +235,7 @@ export default function ResumeEditorPage() {
   }
 
   return (
+      <div className="min-h-screen flex flex-col">
     <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-brand-background">
   <MinimalNav />
   
@@ -244,7 +247,7 @@ export default function ResumeEditorPage() {
     <aside className="w-1/4 min-w-[300px] p-4 border-r dark:border-gray-700 overflow-y-auto flex flex-col">
       <h2 className="text-lg font-semibold text-black mb-3">Your Resumes</h2>
       
-    <div className="flex-grow overflow-y-auto pr-1">
+  <div className="flex-grow overflow-y-auto pr-1 max-h-[300px]">
       <div className="space-y-2">
         {allResumes.map((cv) => (
           <CVCard
@@ -257,14 +260,28 @@ export default function ResumeEditorPage() {
         ))}
       </div>
     </div>
-      <div className="mt-4 pt-4 border-t dark:border-gray-700 space-y-2">
-        <Button className="w-full" onClick={handleSuggest}>
-          suggest
-        </Button>
-        <Button className="w-full" onClick={handleUploadNew}>
-          <Upload className="mr-2 h-4 w-4" />
-          upload
-        </Button>
+        <div className="mt-4 pt-4 border-t dark:border-gray-700 space-y-2">
+        {/* === NÚT SUGGEST === */}
+        <AnimatedButton
+          className="w-full"
+          onClick={handleSuggest}
+          isLoading={isSuggesting}
+          disabled={isSuggesting}
+          loadingText={t("resume.suggestingJobs")}
+          loadingIcon={<Loader2 className="h-4 w-4 animate-spin" />}
+          variant="primary"
+        >
+          {t("resume.suggestJobs")}
+        </AnimatedButton>
+
+        {/* === NÚT UPLOAD === */}
+        <AnimatedButton
+          className="w-full"
+          onClick={handleUploadNew}
+          variant="primary"
+        >
+          {t("common.uploadNew")}
+        </AnimatedButton>
       </div>
     </aside>
 
@@ -310,6 +327,7 @@ export default function ResumeEditorPage() {
       )}
     </aside>
   </div>
+</div>
 </div>
   );
 }

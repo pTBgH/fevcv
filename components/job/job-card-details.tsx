@@ -2,7 +2,7 @@
 
 import { MapPin, GraduationCap, Clock, LucideProps } from "lucide-react"
 import React from "react"
-
+import { CompanyDisplay } from "./company-display"
 // --- Helper Component: Tạo một component nhỏ cho mỗi Tag ---
 // Component này chỉ được dùng trong file này để code gọn hơn.
 interface JobAttributeTagProps {
@@ -68,24 +68,8 @@ export function JobCardDetails({
       {/* Top section */}
       <div className="bg-brand-cream pt-2 pl-5 pb-4 pr-4 text-black rounded-t-xl">
         <div className="flex items-center mb-4">
-          <div className="w-12 h-12 bg-white flex items-center justify-center rounded-lg mr-3 overflow-hidden flex-shrink-0">
-            {company.logo ? (
-              <img
-                src={company.logo || "/placeholder.svg"}
-                alt={`${company.name} logo`}
-                className="object-contain w-full h-full"
-              />
-            ) : (
-              <span className="text-black text-xl font-bold">
-                {company.name.charAt(0)}
-              </span>
-            )}
-          </div>
-          <div className="overflow-hidden pr-28">
-            <div className="font-semibold text-lg leading-tight line-clamp-2 min-h-[56px]">{company.name}</div>
-          </div>
+          <CompanyDisplay companyName={company.name} />
         </div>
-
         <h3 className="font-bold text-2xl mb-4 leading-tight truncate">
           {title}
         </h3>
@@ -108,9 +92,9 @@ export function JobCardDetails({
             {daysLeft} {daysLeft > 1 ? "days" : "day"} left
           </span>
         </div>
-        <div className="font-semibold text-lg text-brand-cream">
+        <p className="text-sm font-normal text-brand-cream">
           {salaryDisplay}
-        </div>
+        </p>
       </div>
     </>
   )

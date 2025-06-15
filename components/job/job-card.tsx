@@ -19,6 +19,8 @@ import {
 import { useLanguage } from "@/lib/i18n/context"
 // import { useReduxToast } from "@/hooks/use-redux-toast"
 import { useSession, signIn } from "next-auth/react"
+import { CompanyDisplay } from "./company-display"
+
 
 interface JobCardProps {
   job: Job
@@ -28,6 +30,22 @@ interface JobCardProps {
   onHide?: (id: string) => void
   onRestore?: (id: string) => void
 }
+
+function formatSalary(min?: number, max?: number): string {
+  const format = (value: number) => `${(value / 1_000_000).toFixed(0)} tr`;
+
+  if (min && max) {
+    return `${format(min)} - ${format(max)}`;
+  }
+  if (min) {
+    return `Từ ${format(min)}`;
+  }
+  if (max) {
+    return `Đến ${format(max)}`;
+  }
+  return "Thỏa thuận";
+}
+
 
 export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRestore }: JobCardProps) {
   const dispatch = useAppDispatch()
@@ -185,7 +203,7 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
           title={jobWithCompany.title}
           city={jobWithCompany.city ?? ""}
           jobType={jobWithCompany.type ?? ""}
-          salaryDisplay={`${jobWithCompany.minSalary || 0}-${jobWithCompany.maxSalary || 0}k`}
+          salaryDisplay={formatSalary(jobWithCompany.minSalary, jobWithCompany.maxSalary)}
           daysLeft={jobWithCompany.daysLeft || 10}
         />
         <JobCardActions

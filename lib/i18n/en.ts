@@ -1,4 +1,5 @@
 import SuggestedJobCard from "@/components/suggested-job-card";
+import { Upload } from "lucide-react";
 
 export const en = {
   // Các trang chính
@@ -14,6 +15,7 @@ export const en = {
   },
 
   common: {
+    uploadNew: "Upload",
     home: "Home",
     upload: "Upload",
     dashboard: "Dashboard",
@@ -135,6 +137,9 @@ export const en = {
 
   // CV
   resume: {
+    yourResumes: "Your Resumes",
+    suggestedJob: "Finding Job",
+    editResume: "Edit",
     chooseResumeForBetterResults: "Choose a resume for better results!",
     uploadCv: "Upload CV",
     changeCv: "Change CV",

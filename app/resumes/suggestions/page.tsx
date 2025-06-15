@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CVCard } from "@/components/resume/cv-card";
 import { JobCard } from "@/components/job/job-card";
+import { AnimatedButton } from "@/components/common/rolate-button"; // <-- thêm import AnimatedButton
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   fetchResumes,
@@ -101,6 +102,19 @@ export default function JobSuggestionsPage() {
     // dispatch(toggleHidden(jobId));
   };
 
+  // --- THÊM 2 hàm xử lý cho nút EDIT và UPLOAD ---
+  const handleEdit = () => {
+    // Ví dụ gửi người dùng sang trang edit CV (sử dụng CV đang được chọn nếu có)
+    if (selectedResumeForSuggestion) {
+      router.push(`/resumes/edit?cvId=${selectedResumeForSuggestion.id}`);
+    }
+  };
+
+  const handleUploadNew = () => {
+    // Ví dụ: chuyển sang trang upload CV mới
+    router.push("/");
+  };
+
   // --- Logic phân trang ---
   const totalPages = Math.ceil(suggestedJobs.length / jobsPerPage);
   const currentJobs = suggestedJobs.slice(
@@ -139,51 +153,54 @@ export default function JobSuggestionsPage() {
   return (
     <div className="flex flex-col h-screen max-h-screen overflow-hidden">
       <MinimalNav />
-      <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center shrink-0">
-        <h1 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
-          {t("dashboard.jobSuggestions") || "Job Suggestions"}
-          {selectedResumeForSuggestion && ` ${t("common.for")} ${selectedResumeForSuggestion.title}`}
-        </h1>
-        <Button onClick={() => router.push("/search")}>
-          {t("common.goToSearchPage") || "Advanced Search"}
-        </Button>
-      </header>
+          <div className="mt-4 max-w-screen-2xl w-full mx-auto flex-1 flex overflow-hidden px-4">
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar trái: Danh sách CV */}
-        <aside className="w-1/3 bg-gray-50 dark:bg-gray-800 p-4 border-r dark:border-gray-700 overflow-y-auto flex flex-col">
-          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-3">
-            {t("resume.yourResumes")}
-          </h2>
-            <div className="flex-grow overflow-y-auto pr-1">
-            <div className="space-y-2">
-              {allResumes.map((cv) => (
-                <CVCard
-                  key={cv.id}
-                  cv={cv}
-                  isSelected={selectedResumeForSuggestion?.id === cv.id}
-                  onSelect={() => handleSelectResume(cv)}
-                  onToggleFavorite={() => handleToggleResumeFavorite(cv.id)}
-                />
-              ))}
-            </div>
-          </div>
-          <Button className="w-full mt-4" onClick={() => router.push("/")}>
-            <Upload className="mr-2 h-4 w-4" />
-            {t("common.uploadResume")}
-          </Button>
-        </aside>
+      <aside className="w-1/4 min-w-[300px] p-4 border-r dark:border-gray-700 overflow-y-auto flex flex-col">
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-3">
+          {t("resume.yourResumes")}
+        </h2>
+        <div className="flex-grow overflow-y-auto pr-1 max-h-[300px] space-y-2">
+          {allResumes.map((cv) => (
+            <CVCard
+              key={cv.id}
+              cv={cv}
+              isSelected={selectedResumeForSuggestion?.id === cv.id}
+              onSelect={() => handleSelectResume(cv)}
+              onToggleFavorite={() => handleToggleResumeFavorite(cv.id)}
+            />
+          ))}
+        </div>
+        {/* === NÚT EDIT và NÚT UPLOAD NEW === */}
+        <div className="mt-4 space-y-2">
+          <AnimatedButton
+            className="w-full"
+            onClick={handleEdit}
+            variant="primary"
+          >
+            {t("resume.editResume")}
+          </AnimatedButton>
+          <AnimatedButton
+            className="w-full"
+            onClick={handleUploadNew}
+            variant="primary"
+          >
+            {t("common.uploadNew")}
+          </AnimatedButton>
+        </div>
+      </aside>
 
         {/* Nội dung chính: Lưới các công việc gợi ý */}
-        <main className="flex-1 p-6 overflow-y-auto bg-white dark:bg-gray-900">
+        <main className="flex-1 px-6 py-6 overflow-y-auto">
           {suggestionsLoading ? (
-            <div className="flex justify-center items-center h-full">
+            <div className="flex items-center justify-between mb-4">
               <Loader2 className="animate-spin h-8 w-8 text-gray-500" />
               <span className="ml-2 text-gray-500">{t("job.searchingForJobs")}</span>
             </div>
           ) : currentJobs.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {currentJobs.map((job) => (
                   <JobCard
                     key={job.id}
@@ -214,6 +231,7 @@ export default function JobSuggestionsPage() {
           )}
         </main>
       </div>
+    </div>
     </div>
   );
 }

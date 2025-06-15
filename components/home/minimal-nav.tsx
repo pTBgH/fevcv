@@ -164,9 +164,9 @@ export function MinimalNav() {
 			<header className={`bg-brand-background dark:bg-gray-900 py-4 sticky top-0 z-50 transition-all duration-300 transform ${isHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"}`}>
 				<div className="container mx-auto px-4">
 					<div className="flex items-center justify-between">
-            <Link href={AppRoutes.home} className="text-3xl font-bold">
-              VietCV
-            </Link>
+						<Link href={AppRoutes.home} className="text-3xl font-bold">
+						VietCV
+						</Link>
 						{/* Desktop Navigation */}
 						<nav className="hidden md:flex flex-1 justify-center items-center space-x-6">
 							{mainNavLinks.map((link) => (
@@ -178,7 +178,7 @@ export function MinimalNav() {
 								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
 								<Input type="search" placeholder={t("navigation.searchJobs") as string} className="pl-10 pr-4 h-10 w-56 bg-brand-cream text-sm" />
 							</form>
-              <ServiceMenu />
+              				<ServiceMenu />
 							<button onClick={() => setLocale(locale === "vi" ? "en" : "vi")} className="text-sm text-gray-600 hover:text-gray-900">
 								{locale.toUpperCase()}
 							</button>

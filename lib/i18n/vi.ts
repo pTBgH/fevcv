@@ -112,6 +112,9 @@ export const vi = {
 
   // CV
   resume: {
+    yourResumes: "CV của bạn",
+    suggestingJobs: "Đang gợi ý",
+    editResume: "Chỉnh sửa",
     chooseResumeForBetterResults: "Chọn CV để có kết quả tốt hơn!",
     uploadCv: "Tải lên CV",
     changeCv: "Thay đổi CV",

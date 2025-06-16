@@ -1,7 +1,7 @@
 "use client"
 import React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { DeletedResumes } from "@/components/resume/deleted-resumes"
+// import { DeletedResumes } from "@/components/resume/deleted-resumes"
 import { HiddenJobs } from "@/components/job/hidden-jobs"
 import { useLanguage } from "@/lib/i18n/context"
 import { MinimalNav } from "@/components/home/minimal-nav"
@@ -23,7 +23,7 @@ export default function BinPage() {
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
             <p className="text-sm text-yellow-700">{t("dashboard.permanentlyDeleted")}</p>
           </div>
-          <DeletedResumes />
+          {/* <DeletedResumes /> */}
         </TabsContent>
 
         <TabsContent value="jobs">

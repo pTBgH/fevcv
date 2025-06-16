@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Upload, Search, CheckCircle } from "lucide-react";
+import Image from "next/image";
 
 export function QuickGuideSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -148,7 +149,9 @@ export function QuickGuideSection() {
 
                       {/* Phần dưới: Ảnh GIF */}
                       <div className="mt-4 w-full aspect-video">
-                        <img
+                        <Image
+                          width = {800}
+                          height = {450}
                           src={step.gif}
                           alt={step.title}
                           className="w-full h-full object-cover rounded-lg"

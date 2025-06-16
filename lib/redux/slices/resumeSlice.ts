@@ -14,6 +14,7 @@ import { getSession } from "next-auth/react";
 
 // --- STATE INTERFACE VÀ INITIALSTATE GIỮ NGUYÊN ---
 interface ResumeState {
+  favorites: any;
   items: Resume[];
   selectedId: string | null;
   loading: boolean;
@@ -25,6 +26,7 @@ const initialState: ResumeState = {
   selectedId: null,
   loading: false,
   error: null,
+  favorites: undefined
 };
 
 

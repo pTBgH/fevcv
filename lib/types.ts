@@ -4,6 +4,7 @@ export interface Company {
 }
 
 export interface Job {
+  category: string;
   id: string;
   title: string;
   city?: string;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { JobSearchBar } from "@/components/job/job-search-bar"
-import { JobGrid } from "@/components/job/job-grid"
+// import { JobGrid } from "@/components/job/job-grid"
 import { useLanguage } from "@/lib/i18n/context"
 import { debugUserActions, getFilteredJobs } from "@/lib/job-service"
 import { DisplayModeSelector, type DisplayMode } from "@/components/job/display-mode-selector"
@@ -157,12 +157,12 @@ export default function FavoriteJobsPage() {
         )}
 
         <div className="flex-1">
-          <JobGrid
+          {/* <JobGrid
             type="favorite"
             itemsPerPage={displayMode.columns * displayMode.rows}
             displayMode={displayMode}
             jobs={jobs}
-          />
+          /> */}
         </div>
       </div>
     </div>

@@ -1,40 +1,35 @@
-# Giai đoạn 1: Build ứng dụng
-# Sử dụng một image Node.js phiên bản mới nhất (hoặc phiên bản bạn đang dùng)
-FROM node:22-alpine AS builder
+# === Stage 1: The Builder ===
+# Không cần ARG ở đây nữa
+FROM node:22-alpine AS build_image
 
-# Thiết lập thư mục làm việc bên trong container
 WORKDIR /app
 
-# Sao chép các file package.json và lock file vào trước
-# Tận dụng cache của Docker, bước này chỉ chạy lại khi các file này thay đổi
-COPY package*.json ./
+COPY package.json package-lock.json ./
+RUN npm install --frozen-lockfile
 
-# Cài đặt các dependencies
-RUN npm install
-
-# Sao chép toàn bộ mã nguồn còn lại của ứng dụng vào
 COPY . .
-
-# Build ứng dụng Next.js cho production
-# Các biến môi trường NEXT_PUBLIC_* cần được cung cấp ở đây
-# nếu chúng cần thiết trong quá trình build
+# Biến môi trường public (nếu có) có thể được truyền vào lúc build
+# RUN NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL npm run build
+# Nhưng thường thì Next.js sẽ tự lấy từ môi trường lúc chạy nên không cần
 RUN npm run build
 
-
-# Giai đoạn 2: Chạy ứng dụng đã build
-# Sử dụng một image nhỏ hơn để chạy, tối ưu kích thước
-FROM node:20-alpine
+# === Stage 2: The Runner ===
+FROM node:22-alpine
 
 WORKDIR /app
 
-# Sao chép các file đã build từ giai đoạn 'builder'
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public
+# Biến này rất quan trọng cho image production
+ENV NODE_ENV=production
 
-# Expose port 3000 mà Next.js sẽ chạy
+COPY --from=build_image /app/package.json ./package.json
+COPY --from=build_image /app/package-lock.json ./package-lock.json
+RUN npm install --only=production --frozen-lockfile
+
+COPY --from=build_image /app/.next ./.next
+COPY --from=build_image /app/public ./public
+
 EXPOSE 3000
 
-# Lệnh để khởi động server Next.js production
+USER node
+
 CMD ["npm", "start"]

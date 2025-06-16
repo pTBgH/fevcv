@@ -11,3 +11,11 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return <HomeClient />
 }
+
+console.log("KEYCLOAK_ISSUER:", process.env.KEYCLOAK_ISSUER);
+console.log("KEYCLOAK_CLIENT_ID:", process.env.KEYCLOAK_CLIENT_ID);
+console.log("KEYCLOAK_CLIENT_SECRET:", process.env.KEYCLOAK_CLIENT_SECRET);
+console.log("NEXTAUTH_SECRET:", process.env.NEXTAUTH_SECRET);
+console.log("NEXT_PUBLIC_KEYCLOAK_ISSUER:", process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER);
+console.log("NEXT_PUBLIC_KEYCLOAK_CLIENT_ID:", process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID);
+console.log("NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET:", process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET);

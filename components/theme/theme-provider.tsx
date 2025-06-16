@@ -21,7 +21,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // Áp dụng theme hiện tại
       applyTheme(theme)
     }
-  }, []) // Chỉ chạy một lần khi component mount
+  }, [dispatch, theme]) // Chỉ chạy một lần khi component mount
 
   // Effect riêng biệt để xử lý khi theme thay đổi
   useEffect(() => {

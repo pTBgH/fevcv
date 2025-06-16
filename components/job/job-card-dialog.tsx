@@ -12,7 +12,7 @@ interface JobCardDialogProps {
   onDontAskAgainTodayChange: (checked: boolean) => void;
   onCancel: () => void;
   onConfirm: () => void;
-  dialogRef: RefObject<HTMLDivElement | null>;
+  dialogRef: RefObject<HTMLDivElement>;
 }
 
 export function JobCardDialog({

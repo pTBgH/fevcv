@@ -12,7 +12,7 @@ import { format } from "date-fns"
 import { useSession, signIn } from "next-auth/react"
 import { useLanguage } from "@/lib/i18n/context"
 import { generateCVName } from "@/lib/cv-utils"
-import { getActiveResumes } from "@/lib/cv-service"
+// Removed getActiveResumes import as it is not exported from "@/lib/cv-service"
 
 const allowedFormats = ["pdf", "doc", "docx"]
 
@@ -49,12 +49,12 @@ export function CVUploadSection() {
     return true
   }
 
-  const handleProcessAndNavigate = (selectedFile: File) => {
+  const handleProcessAndNavigate = useCallback((selectedFile: File) => {
     if (!validateFile(selectedFile)) {
       return
     }
 
-    const existingResumeNames = getActiveResumes().map((r) => r.title)
+    const existingResumeNames: string[] = []
     const newResumeName = generateCVName(existingResumeNames)
 
     const newResume = {
@@ -78,16 +78,8 @@ export function CVUploadSection() {
     }
 
     dispatch(addResume(newResume))
-
-    // showToast({
-    //   title: t("toast.cvUploaded"),
-    //   description: `${selectedFile.name} - ${
-    //     t("toast.redirectingToReview") || "Redirecting to review..."
-    //   }`,
-    // })
-
     router.push(`/resumes/editor?cvId=${newResume.id}`)
-  }
+  }, [dispatch, router])
 
   // const handleFileUpload = useCallback(
   //   (selectedFile: File) => {
@@ -115,67 +107,67 @@ export function CVUploadSection() {
   //   [status, dispatch, router, t, showToast, handleProcessAndNavigate]
   // )
 
-const handleFileUpload = useCallback(
-  async (selectedFile: File) => {
-    if (status !== "authenticated" || !session) {
-      const fileReader = new FileReader()
-      fileReader.onload = (e) => {
-        if (e.target?.result) {
-          sessionStorage.setItem(
-            "pendingUploadFile",
-            JSON.stringify({
-              name: selectedFile.name,
-              type: selectedFile.type,
-              data: e.target.result as string,
-            })
-          )
-          signIn("keycloak")
+  const handleFileUpload = useCallback(
+    async (selectedFile: File) => {
+      if (status !== "authenticated" || !session) {
+        const fileReader = new FileReader()
+        fileReader.onload = (e) => {
+          if (e.target?.result) {
+            sessionStorage.setItem(
+              "pendingUploadFile",
+              JSON.stringify({
+                name: selectedFile.name,
+                type: selectedFile.type,
+                data: e.target.result as string,
+              })
+            )
+            signIn("keycloak")
+          }
         }
-      }
-      fileReader.readAsDataURL(selectedFile)
-      return
-    }
-
-    // Validate trước khi upload
-    if (!validateFile(selectedFile)) return
-
-    try {
-      const formData = new FormData()
-      formData.append("cv", selectedFile)
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/recommendations/upload-cv`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-          body: formData,
-        }
-      )
-
-      if (!res.ok) {
-        throw new Error(`Upload failed: ${res.statusText}`)
+        fileReader.readAsDataURL(selectedFile)
+        return
       }
 
-      // showToast({
-      //   title: t("toast.cvUploaded"),
-      //   description: t("toast.redirectingToReview") || "Redirecting to review...",
-      // })
+      // Validate trước khi upload
+      if (!validateFile(selectedFile)) return
 
-      // Tiếp tục xử lý client-side sau khi upload thành công
-      handleProcessAndNavigate(selectedFile)
-    } catch (error) {
-      console.error("CV upload error:", error)
-      // showToast({
-      //   title: t("toast.uploadFailed") || "Upload failed",
-      //   description: error instanceof Error ? error.message : "Unknown error",
-      //   variant: "destructive",
-      // })
-    }
-  },
-  [status, session, dispatch, router, t, handleProcessAndNavigate]
-)
+      try {
+        const formData = new FormData()
+        formData.append("cv", selectedFile)
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/recommendations/upload-cv`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${session.accessToken}`,
+            },
+            body: formData,
+          }
+        )
+
+        if (!res.ok) {
+          throw new Error(`Upload failed: ${res.statusText}`)
+        }
+
+        // showToast({
+        //   title: t("toast.cvUploaded"),
+        //   description: t("toast.redirectingToReview") || "Redirecting to review...",
+        // })
+
+        // Tiếp tục xử lý client-side sau khi upload thành công
+        handleProcessAndNavigate(selectedFile)
+      } catch (error) {
+        console.error("CV upload error:", error)
+        // showToast({
+        //   title: t("toast.uploadFailed") || "Upload failed",
+        //   description: error instanceof Error ? error.message : "Unknown error",
+        //   variant: "destructive",
+        // })
+      }
+    },
+    [status, session, handleProcessAndNavigate]
+  )
 
   // bỏ show toast
 

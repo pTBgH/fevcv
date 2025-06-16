@@ -136,7 +136,7 @@ export function CVUploadSection() {
     } finally {
       setIsUploading(false);
     }
-  }, [dispatch, router, t, session, status]); // *** THÊM `session` và `status` VÀO DEPENDENCY ARRAY ***
+  }, [dispatch, router, session, status]); // *** THÊM `session` và `status` VÀO DEPENDENCY ARRAY ***
 
   // bỏ toast ở dòng trên
 

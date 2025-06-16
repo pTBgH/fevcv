@@ -34,6 +34,8 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     }
 }
 
+
+
 export const authOptions: AuthOptions = {
   providers: [
     KeycloakProvider({
@@ -45,10 +47,10 @@ export const authOptions: AuthOptions = {
     }),
   ],
 
+
   callbacks: {
     /**
      * Callback này chạy NGAY SAU KHI đăng nhập thành công với Keycloak.
-     * Đây là nơi lý tưởng để đồng bộ user với backend Laravel.
      */
     async signIn({ user, account, profile }) {
       if (account?.provider === "keycloak" && profile) {
@@ -87,7 +89,6 @@ export const authOptions: AuthOptions = {
       return true; // Cho phép các luồng đăng nhập khác (nếu có)
     },
 
-    // Callback `jwt` (Giữ nguyên logic của bạn)
     async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
@@ -154,3 +155,4 @@ declare module "next-auth/jwt" {
     error?: string;
   }
 }
+

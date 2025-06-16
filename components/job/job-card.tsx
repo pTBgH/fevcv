@@ -109,7 +109,7 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
       //   duration: 3000,
       // })
     }
-  }, [job.id, isFavorite, dispatch, onFavorite, t, type, handleUnfavoriteClick])
+  }, [job.id, isFavorite, dispatch, onFavorite, type, handleUnfavoriteClick])
 
   const handleArchiveAction = useCallback(() => {
     if (isArchived && type === "archived") {
@@ -125,7 +125,7 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
       //   duration: 3000,
       // })
     }
-  }, [job.id, isArchived, dispatch, onArchive, t, type, handleUnarchiveClick])
+  }, [job.id, isArchived, dispatch, onArchive, type, handleUnarchiveClick])
 
   // Auth wrapper: check Next‑Auth session status; if not authenticated, trigger signIn("keycloak")
   const authWrapper = useCallback((action: () => void) => {
@@ -153,7 +153,7 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
       //   duration: 3000,
       // })
     })
-  }, [authWrapper, handleHideClick, t])
+  }, [authWrapper, handleHideClick])
 
   const handleRestoreClickWithAuth = useCallback(() => {
     authWrapper(() => {
@@ -164,7 +164,7 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
       //   duration: 3000,
       // })
     })
-  }, [authWrapper, handleRestoreClick, t])
+  }, [authWrapper, handleRestoreClick])
 
   const { isHovered, dialogs, dontAskAgain, temporaryStates } = state
 
@@ -199,7 +199,7 @@ export function JobCard({ job, type = "all", onFavorite, onArchive, onHide, onRe
       >
         <JobCardDetails
           company={jobWithCompany.company}
-          category={jobWithCompany.category ?? ""}
+          category={(job as any).category ?? ""}
           title={jobWithCompany.title}
           city={jobWithCompany.city ?? ""}
           jobType={jobWithCompany.type ?? ""}
